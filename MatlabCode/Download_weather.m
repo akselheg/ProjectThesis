@@ -1,12 +1,8 @@
+clearvars;close all;clc;
 
 
-
-clc
-clear all
-close all
-
-startDate = [2020, 03, 30];
-endDate = [2020, 03, 30];
+startDate = [2020, 07, 01];
+endDate = [2020, 07, 02];
 
 startDateString = string(startDate(1)) + "/" + string(startDate(2)) + "/" + string(startDate(3));
 endDateString = string(endDate(1)) + "/" + string(endDate(2)) + "/" + string(endDate(3));
