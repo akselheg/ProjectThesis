@@ -1,4 +1,4 @@
-clc;clearvars; close all;
+clc;clearvars; %close all;
 
 addpath('./Mausund221241/');
 gpsFix = load('GpsFix.mat');
@@ -56,6 +56,6 @@ for i = gps_start_time + 1 :gps_end_time
     disp(['| Day: ', num2str(floor(i/24)+1),'   | Hour: ', num2str(mod(i,24)), '  |  WaveSize: ', num2str(waveSize(x,y,i+1)),...
         '  |  WaveDir: ', num2str(wavedir), '  |', ])
        
-    waveSize(x-1:x+1,y-1:y+1,i+1)
-    waveDir(x-1:x+1,y-1:y+1,i+1)
+%     waveSize(x-1:x+1,y-1:y+1,i+1)
+%     waveDir(x-1:x+1,y-1:y+1,i+1)
 end
