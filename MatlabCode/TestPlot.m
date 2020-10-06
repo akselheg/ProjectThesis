@@ -21,12 +21,12 @@ rmpath("./Mausund181204")
 addpath("./Mausund221241")
 data1 = load('GpsFix.mat');
 data1 = data1.GpsFix;
-data2 = load('DesiredSpeed.mat');
-data2 = data2.DesiredSpeed;
+data2 = load('DesiredHeading.mat');
+data2 = data2.DesiredHeading;
 data3 = load('RelativeWind.mat');
 data3 = data3.RelativeWind;
 
-PlotMraData(data1.timestamp, data1.sog , "Sog", ...
+PlotMraData(data1.timestamp, data1.cog , "cog", ...
     data2.timestamp, data2.value, 'DesiredSpeed');
 
 PlotMraData(data1.timestamp, data1.sog , "Sog", ...

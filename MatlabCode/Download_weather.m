@@ -40,12 +40,12 @@ for i = 0:numDays
         
         waveSize(:,:,1:18) = ncread(waveData,'mHs', [1 1 7], [inf inf inf]);
     
-        waveDir(:,:,1:18) = ncread(waveData,'thq_sea', [1 1 1], [inf inf 18]);
+        waveDir(:,:,1:18) = ncread(waveData,'thq_sea', [1 1 7], [inf inf inf]);
  
     end
     waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800mhf/mywavewam800_midtnorge.an." + string(numberDate) + "18.nc";
 
-    windEast(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'Uwind');
+    windEast(:,:,24*i+1:24*i+24) = double(ncread(windCurrentData,'Uwind'));
     
     windNorth(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'Vwind');
     
