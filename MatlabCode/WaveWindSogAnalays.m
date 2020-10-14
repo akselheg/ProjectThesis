@@ -1,19 +1,30 @@
 clc;clearvars; close all;
 
 %% load data
-addpath('./Mausund181204/');
+path = './Mausund221241/';
+addpath(path);
 gpsFix = load('GpsFix.mat');
+gps_data = gpsFix.GpsFix;
 RelativeWind = load('RelativeWind.mat');
 windData = RelativeWind.RelativeWind;
-load('weatherData_2020-7-1_2020-7-2.mat')
+dir = append(path,'EstimatedState.mat');
+EstimatedState = load(dir);
+EstimatedState = EstimatedState.EstimatedState;
+EstimatedState.psi = ssa(EstimatedState.psi,'deg');
+dir = append(path, 'EulerAngles.mat');
 EulerAngles = load('EulerAngles.mat');
 EulerAngles = EulerAngles.EulerAngles;
-rmpath('./Mausund181204/')
+AbsoluteWind = load('AbsoluteWind.mat');
+AbsoluteWind = AbsoluteWind.AbsoluteWind;
+rmpath(path)
+load('weatherData_2020-7-1_2020-7-2.mat')
+
 disp('Done loading data')
 %% Format and interpolations
-gps_data = gpsFix.GpsFix;
-windDataAngles = interp1(windData.timestamp, windData.angle,gps_data.timestamp);
+
+windDataAngles = interp1(windData.timestamp, ssa(windData.angle,'deg'),gps_data.timestamp);
 windDataSpeed = interp1(windData.timestamp, windData.speed,gps_data.timestamp);
+AbsoluteWind_int = interp1(AbsoluteWind.timestamp, ssa(AbsoluteWind.dir,'deg'),gps_data.timestamp);
 cog_data = [];
 sog_data = [];
 wind_data = [];
@@ -26,13 +37,13 @@ y = 0;
 disp('Done formating')
 disp('Start running through data')
 %% run
-for min = 60 : length(gps_data.sog)
+for min = 60 : length(gps_data.sog) - 60
     if ~mod(gps_data.utc_time(min),60)
         curr_hour = floor(double(gps_data.utc_time(min))/3600) + 24*(double(gps_data.utc_day(min)) - 1);
         lat = rad2deg(gps_data.lat(min));
         lon = rad2deg(gps_data.lon(min));
         cog = rad2deg(mean(gps_data.cog(min-10:min+10)));
-        psi = rad2deg(mean(EulerAngles.psi(min-10:min+10)));
+        psi = rad2deg(mean(EstimatedState.psi(min-10:min+10)));
         sog = mean(gps_data.sog(min-10:min+10));
         increment = 0.0001; % resolution lat and lon in gps
         num_increments = 0;
@@ -52,22 +63,30 @@ for min = 60 : length(gps_data.sog)
             end
             num_increments = num_increments + 1;
         end
-        wave_dir = waveDir(x,y,curr_hour+1);
+        wave_dir = ssa(waveDir(x,y,curr_hour+1),'deg');
         if abs(waveDir(x,y,curr_hour+1))> 180
             wavedir = waveDir(x,y,curr_hour+1) - sign(waveDir(x,y,curr_hour+1))*360;
         else
             wavedir = waveDir(x,y,curr_hour+1);
         end
+        
+
         windangle = mean(windDataAngles(min-10:min+10));
         windspeed = mean(windDataSpeed(min-10:min+10));
-
-        if waveSize(x,y,curr_hour+1) < 10 && waveSize(x,y,curr_hour+1) > 0.01
-            cog_data = cat(1, cog_data,cog);
-            sog_data = cat(1, sog_data,sog);
-            wave_data = cat(1, wave_data,ssa(psi-wave_dir, 'deg'));
-            wave_size_data = cat(1, wave_size_data,waveSize(x, y, curr_hour + 1));
-            wind_angle_data = cat(1, wind_angle_data, windangle);
-            wind_speed_data = cat(1, wind_speed_data, windspeed);
+        cog_data = cat(1, cog_data,cog);
+        sog_data = cat(1, sog_data,sog);
+        wave_data = cat(1, wave_data,ssa(psi-wave_dir, 'deg'));
+        wave_size_data = cat(1, wave_size_data,waveSize(x, y, curr_hour + 1));
+        wind_angle_data = cat(1, wind_angle_data, windangle);
+        wind_speed_data = cat(1, wind_speed_data, windspeed);
+        AwindDir = mean(AbsoluteWind_int(min-10:min+10));
+%         diff = ssa((AwindDir) - windDir(x,y,curr_hour+1),'deg');
+%         if abs(diff) > 4
+%             disp(num2str(diff))
+%         end
+        diff = ssa(ssa(psi-(AwindDir), 'deg') - windangle, 'deg');
+        if abs(diff) > 3
+            disp(num2str(diff))
         end
         if ~mod(gps_data.utc_time(min),3600)
             str = sprintf('| Day: %d \t | Hour: %d \t |', (floor(curr_hour/24)+1), (mod(curr_hour,24)));
