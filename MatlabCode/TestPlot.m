@@ -1,5 +1,5 @@
 clc; close all; clearvars;
-% AbsoluteWind,Depth,DesiredHeading,DesiredPath,DesiredSpeed,DesiredZ,GpsFix,RelativeWind,RemoteSensorInfo
+% AbsoluteWind,Depth,DesiredHeading,DesiredPath,DesiredSpeed,DesiredZ,GpsFix,RelativeWind,RemoteSensorInfo,EstimatedState,EulerAngles
 % addpath("./Mausund181204")
 % data1 = load('GpsFix.mat');
 % data1 = data1.GpsFix;
