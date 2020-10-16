@@ -18,8 +18,6 @@ for i = 0:numDays
     numberPreviousDate = yyyymmdd(datetime(datestr(previousDate)));
     
     windCurrentData =  "https://thredds.met.no/thredds/dodsC/fou-hi/norkyst800m-1h/NorKyst-800m_ZDEPTHS_his.an." + string(numberDate) + "00.nc";
-
-    
     if i == 0
         waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800mhf/mywavewam800_midtnorge.an." + string(numberPreviousDate) + "18.nc";
         windCurrentInfo = ncinfo(windCurrentData);
@@ -30,7 +28,7 @@ for i = 0:numDays
         longitudeMapWindCurrent = ncread(windCurrentData,'lon');
         windCurrentDimentions = [size(latitudeMapWindCurrent), 24*(numDays+1)];
         waveDimentions = [size(latitudeMapWave) , 24*(numDays+1) + 18];
-        
+        windCurrentDimentions2 = [size(latitudeMapWindCurrent),2, 24*(numDays+1)];
         windEast = zeros(windCurrentDimentions);
         windNorth = zeros(windCurrentDimentions);
         currentEast = zeros(windCurrentDimentions);
@@ -39,7 +37,6 @@ for i = 0:numDays
         waveDir = zeros(waveDimentions);
         windDir = zeros(waveDimentions); 
         waveSize(:,:,1:18) = ncread(waveData,'mHs', [1 1 7], [inf inf inf]);
-    
         waveDir(:,:,1:18) = ncread(waveData,'thq', [1 1 7], [inf inf inf]); % I believe thq is total wave dir
         windDir(:,:,1:18) = ncread(waveData,'dd', [1 1 7], [inf inf inf]);
   
@@ -50,7 +47,7 @@ for i = 0:numDays
     
     windNorth(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'Vwind');
     
-    currentNorth(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'v_northward',[1 1 1 1],[inf inf 1 inf]);
+    currentNorth(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'v_northward',[1 1 2 1],[inf inf 1 inf]);
     
     currentEast(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'u_eastward',[1 1 1 1],[inf inf 1 inf]);
     
