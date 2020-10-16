@@ -62,12 +62,13 @@ for i = gps_start_time + 1 :gps_end_time
         end
         num_increments = num_increments + 1;
     end
-    wave_dir = waveDir(x,y,i+1);
+    wave_dir = ssa(waveDir(x,y,i+1));
     if abs(waveDir(x,y,i+1))> 180
         wavedir = waveDir(x,y,i+1) - sign(waveDir(x,y,i+1))*360;
     else
         wavedir = waveDir(x,y,i+1);
     end
+    
     windangle = mean(windDataAngles(index-100:index+100));
     
     
