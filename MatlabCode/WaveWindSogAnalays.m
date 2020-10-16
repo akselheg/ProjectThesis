@@ -22,7 +22,7 @@ load('weatherData_2020-7-1_2020-7-2.mat')
 disp('Done loading data')
 %% Format and interpolations
 
-windDataAngles = interp1(windData.timestamp, ssa(windData.angle,'deg'),gps_data.timestamp);
+windDataAngles = interp1(windData.timestamp, ssa(windData.angle,'deg' ),gps_data.timestamp);
 windDataSpeed = interp1(windData.timestamp, windData.speed,gps_data.timestamp);
 AbsoluteWind_int = interp1(AbsoluteWind.timestamp, ssa(AbsoluteWind.dir,'deg'),gps_data.timestamp);
 cog_data = [];
@@ -33,6 +33,12 @@ wave_size_data = [];
 wind_angle_data = [];
 wind_speed_data = [];
 psi_data= [];
+windDir_data = [];
+wave_data_2 = [];
+wind_data_2 = [];
+wave_data_3 = [];
+wind_data_3 = [];
+
 x = 0;
 y = 0;
 disp('Done formating')
@@ -68,6 +74,7 @@ for min = 60 : length(gps_data.sog) - 60
         end
         
         wave_dir = ssa(waveDir(x,y,curr_hour+1),'deg');
+        wind_dir = ssa(windDir(x,y,curr_hour+1),'deg');
         windangle = mean(windDataAngles(min-avrager:min+avrager));
         windspeed = mean(windDataSpeed(min-avrager:min+avrager));
         if waveSize(x, y, curr_hour + 1) > 0.001
@@ -75,6 +82,11 @@ for min = 60 : length(gps_data.sog) - 60
             psi_data = cat(1, psi_data,psi);
             sog_data = cat(1, sog_data,sog);
             wave_data = cat(1, wave_data,ssa(psi+wave_dir, 'deg'));
+            wave_data_2 = cat(1, wave_data_2, ssa(ssa(wave_dir + 180,'deg') - psi , 'deg'));
+            wind_data_2 = cat(1, wind_data_2, ssa(ssa(wind_dir + 180,'deg') - psi , 'deg'));
+            wave_data_3 = cat(1, wave_data_3, ssa(ssa(wave_dir + 180,'deg') - cog , 'deg'));
+            wind_data_3 = cat(1, wind_data_3, ssa(ssa(wind_dir + 180,'deg') - cog , 'deg'));
+            windDir_data = cat(1, windDir_data, wind_dir);
             wave_size_data = cat(1, wave_size_data,waveSize(x, y, curr_hour + 1));
             wind_angle_data = cat(1, wind_angle_data, windangle);
             wind_speed_data = cat(1, wind_speed_data, windspeed);
@@ -94,11 +106,14 @@ disp('Run Success')
 %%
 disp('plotting Data')
 figure(1)
-scatter3(wave_data,wave_size_data,sog_data)
-xlabel 'Wavedir',ylabel 'waveSize',zlabel 'sog';
+scatter3(wave_data_2,wave_size_data,sog_data)
+xlabel 'Relative wave direction',ylabel 'Wave Size',zlabel 'SOG';
+figure(4)
+scatter3(wave_data_3,wave_size_data,sog_data)
+xlabel 'Relative wave direction to Cog',ylabel 'Wave Size',zlabel 'SOG';
 figure(2)
-scatter3(wave_data,wind_angle_data, sog_data)
-xlabel 'Wavedir',ylabel 'windangle',zlabel 'sog';
+scatter3(wave_data_2,wind_angle_data, sog_data)
+xlabel 'Relative wave direction',ylabel 'Relative Wind Angle',zlabel 'SOG';
 figure(3)
 scatter3(wind_speed_data,wind_angle_data, sog_data)
-xlabel 'WindSpeed',ylabel 'windangle',zlabel 'sog';
+xlabel 'Wind Speed',ylabel 'Relative Wind Angle',zlabel 'SOG';

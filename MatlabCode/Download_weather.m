@@ -47,7 +47,7 @@ for i = 0:numDays
     
     windNorth(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'Vwind');
     
-    currentNorth(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'v_northward',[1 1 2 1],[inf inf 1 inf]);
+    currentNorth(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'v_northward',[1 1 1 1],[inf inf 1 inf]);
     
     currentEast(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'u_eastward',[1 1 1 1],[inf inf 1 inf]);
     
