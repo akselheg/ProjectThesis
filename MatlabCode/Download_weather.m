@@ -36,10 +36,12 @@ for i = 0:numDays
         waveSize = zeros(waveDimentions);
         waveDir = zeros(waveDimentions);
         windDir = zeros(waveDimentions); 
+        waveHZ = zeros(waveDimentions); 
         waveSize(:,:,1:18) = ncread(waveData,'mHs', [1 1 7], [inf inf inf]);
         waveDir(:,:,1:18) = ncread(waveData,'thq', [1 1 7], [inf inf inf]); % I believe thq is total wave dir
         windDir(:,:,1:18) = ncread(waveData,'dd', [1 1 7], [inf inf inf]);
-  
+        waveHZ(:,:,1:18) = ncread(waveData,'tp', [1 1 7], [inf inf inf]);
+        
     end
     waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800mhf/mywavewam800_midtnorge.an." + string(numberDate) + "18.nc";
 
@@ -55,12 +57,13 @@ for i = 0:numDays
     
     waveDir(:,:,24*i+19:24*i+42) = ncread(waveData,'thq');  % I believe thq is total wave dir 
     windDir(:,:,24*i+19:24*i+42) = ncread(waveData,'dd');
+    waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
 end
 %%
 
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
-save(savename,'windEast','windNorth','currentNorth', 'currentEast', 'waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave', 'latitudeMapWindCurrent', 'longitudeMapWindCurrent','windDir', 'windCurrentInfo', 'waveInfo','-v7.3');
+save(savename,'waveHZ','windEast','windNorth','currentNorth', 'currentEast', 'waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave', 'latitudeMapWindCurrent', 'longitudeMapWindCurrent','windDir', 'windCurrentInfo', 'waveInfo','-v7.3');
 
 
