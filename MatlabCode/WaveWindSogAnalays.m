@@ -48,7 +48,7 @@ for min = 60 : length(gps_data.sog) - 60
     if ~mod(gps_data.utc_time(min),60)
         curr_hour = floor(double(gps_data.utc_time(min))/3600) ...
             + 24*(double(gps_data.utc_day(min)) - 1);
-        avrager = 5;
+        avrager = 30;
         lat = mean(rad2deg(gps_data.lat(min-avrager:min+avrager)));
         lon = mean(rad2deg(gps_data.lon(min-avrager:min+avrager)));
         cog = rad2deg(mean(gps_data.cog(min-avrager:min+avrager)));
