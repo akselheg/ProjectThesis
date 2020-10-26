@@ -48,6 +48,8 @@ for i = 0:numDays
     windDir(:,:,24*i+19:24*i+42) = ncread(waveData,'dd');
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
     windSpeed(:,:,24*i+19:24*i+42) = ncread(waveData,'ff');
+    currentNorth(:,:,1,24*i+1:24*i+24) = ncread(windCurrentData,'v_northward',[1 1 1 1],[inf inf 1 inf]);
+    currentEast(:,:,1,24*i+1:24*i+24) = ncread(windCurrentData,'u_eastward',[1 1 1 1],[inf inf 1 inf]);
 end
 %%
 

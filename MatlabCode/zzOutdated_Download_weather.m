@@ -1,8 +1,8 @@
 clearvars;close all;clc;
 
 
-startDate = [2020, 07, 03];
-endDate = [2020, 07, 04];
+startDate = [2020, 07, 01];
+endDate = [2020, 07, 01];
 
 startDateString = string(startDate(1)) + "/" + string(startDate(2)) + "/" + string(startDate(3));
 endDateString = string(endDate(1)) + "/" + string(endDate(2)) + "/" + string(endDate(3));
@@ -26,7 +26,7 @@ for i = 0:numDays
         longitudeMapWave = ncread(waveData,'longitude');
         latitudeMapWindCurrent = ncread(windCurrentData,'lat');
         longitudeMapWindCurrent = ncread(windCurrentData,'lon');
-        windCurrentDimentions = [size(latitudeMapWindCurrent), 24*(numDays+1)];
+        windCurrentDimentions = [size(latitudeMapWindCurrent),1, 24*(numDays+1)];
         waveDimentions = [size(latitudeMapWave) , 24*(numDays+1) + 18];
         windCurrentDimentions2 = [size(latitudeMapWindCurrent),2, 24*(numDays+1)];
         windEast = zeros(windCurrentDimentions);
@@ -45,15 +45,15 @@ for i = 0:numDays
     end
     waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800mhf/mywavewam800_midtnorge.an." + string(numberDate) + "18.nc";
 
-    windEast(:,:,24*i+1:24*i+24) = double(ncread(windCurrentData,'Uwind'));
+    windEast(:,:,1,24*i+1:24*i+24) = double(ncread(windCurrentData,'Uwind'));
     
-    windNorth(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'Vwind');
+    windNorth(:,:,1,24*i+1:24*i+24) = ncread(windCurrentData,'Vwind');
     
-    currentNorth(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'v_northward',[1 1 1 1],[inf inf 1 inf]);
+    currentNorth(:,:,1,24*i+1:24*i+24) = ncread(windCurrentData,'v_northward',[1 1 1 1],[inf inf 1 inf]);
     
-    currentEast(:,:,24*i+1:24*i+24) = ncread(windCurrentData,'u_eastward',[1 1 1 1],[inf inf 1 inf]);
+    currentEast(:,:,1,24*i+1:24*i+24) = ncread(windCurrentData,'u_eastward',[1 1 1 1],[inf inf 1 inf]);
     
-    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'mHs');
+    waveSize(:,:,24*i+19:24*i+42) = ncread(waveData,'mHs');
     
     waveDir(:,:,24*i+19:24*i+42) = ncread(waveData,'thq');  % I believe thq is total wave dir 
     windDir(:,:,24*i+19:24*i+42) = ncread(waveData,'dd');
@@ -63,7 +63,7 @@ end
 
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
-savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
+savename = "zzweatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename,'waveHZ','windEast','windNorth','currentNorth', 'currentEast', 'waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave', 'latitudeMapWindCurrent', 'longitudeMapWindCurrent','windDir', 'windCurrentInfo', 'waveInfo','-v7.3');
 
 

@@ -6,8 +6,10 @@ function [current_components, current_time] = get_current_components(GpsData, id
     RAD2DEG = 180/pi;
     save_directory = pwd;
     base_path = "https://thredds.met.no/thredds/dodsC/fou-hi/norkyst800m-1h/NorKyst-800m_ZDEPTHS_his.an.202007";
+               %"https://thredds.met.no/thredds/dodsC/fou-hi/norkyst800m-1h/NorKyst-800m_ZDEPTHS_his.an." + string(numberDate) + "00.nc";
     samples_per_hour = 4;
     GPS_sample_time = round(10.^2*(GpsData.timestamp_secondsSince01_01_1970_(2,:)-GpsData.timestamp_secondsSince01_01_1970_(1,:)))/10.^2;
+    
     
     ds_factor = (3600/(samples_per_hour*GPS_sample_time));
     
