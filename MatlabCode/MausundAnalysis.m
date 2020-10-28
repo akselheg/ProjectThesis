@@ -25,6 +25,9 @@ ForecastWaveFreq_data = [];
 ForcastWindSpeed_data = [];
 NorthCurrent_data = [];
 EastCurrent_data = [];
+CurrentDir_data = [];
+CurrentSpeed_data = [];
+
 
 
 avrager = 4*60; % average over x min
@@ -133,8 +136,6 @@ for i = 1: 9
     [latSize,longSize] = size(latitudeMapWave);
     [curlatSize,curlongSize] = size(latitudeCurrentMap);
     first = true;
-    x = 0;
-    y = 0;
     disp('Done formating')
     disp('Start running through data')
     %% run
@@ -142,49 +143,69 @@ for i = 1: 9
         if ~mod(gps_data.utc_time(m),avrager)
             curr_hour = floor(double(gps_data.utc_time(m))/3600) ...
                 + 24*(double(gps_data.utc_day(m)-gps_data.utc_day(1)));
-
+            
+            % Latidtude and longitude position of the vessel
             lat = mean(rad2deg(gps_data.lat(m-avrager:m+avrager)));
             lon = mean(rad2deg(gps_data.lon(m-avrager:m+avrager)));
 
-
-            increment = 0.0001; % resolution lat and lon in gps
-            num_increments = 0;
-            indexes_found = false;
-
-            % Find closest
+            % Find position in wave data
             error_map = sqrt((latitudeMapWave - lat).^2 + (longitudeMapWave - lon).^2);
             [x,y] = find(error_map == min(error_map, [], 'all'));
             
+            % Find position in Current data
             error_map = sqrt((latitudeCurrentMap - lat).^2 + (longitudeCurrentMap - lon).^2);
             [xcurrent,ycurrent] = find(error_map == min(error_map, [], 'all'));
-
+            
+            % Heading, Cog and Sog
             cog = rad2deg(mean(gps_data.cog(m-avrager:m+avrager)));
             psi = rad2deg(mean(EulerAngles.psi(m-avrager:m+avrager)));
             sog = mean(gps_data.sog(m-avrager:m+avrager));
+            
+            % Wind and wave directions and size at given time and postion
             curWaveDir = ssa(waveDir(x,y,curr_hour+1),'deg');
             curWindDir = ssa(windDir(x,y,curr_hour+1),'deg');
-            
-            curNorthCur = currentNorth(xcurrent,ycurrent,curr_hour+1);
-            curEastCur = currentEast(xcurrent,ycurrent,curr_hour+1);
-            
             ForcastWindSpeed = windSpeed(x,y,curr_hour + 1);
-            curMessuredRelWindDir = mean(messuredRelWindDir(m-avrager:m+avrager));
-            curMessuredRelWindSpeed = mean(messuredRelWindSpeed(m-avrager:m+avrager));
             if waveSize(x, y, curr_hour + 1) < 0.001
                 ForecastWaveSize_data = cat(1, ForecastWaveSize_data, ForecastWaveSize_data(end));
             else
                 ForecastWaveSize_data = cat(1, ForecastWaveSize_data, waveSize(x, y, curr_hour + 1));
             end
-            
+            % Wave frequency at given time and position
             ForecastWaveFreq_data = cat(1,ForecastWaveFreq_data, waveHZ(x,y,curr_hour+1));
-
+            
+            % Current vector at given time and position
+            currentNorthCur = currentNorth(xcurrent,ycurrent,curr_hour+1);
+            currentEastCur = currentEast(xcurrent,ycurrent,curr_hour+1);
+            current_vector = [currentNorthCur;currentEastCur];
+            
+            % Velocity vector of the vessel
+            Sog_vector = [sog*cos(deg2rad(cog)); sog*sin(deg2rad(cog))];
+            
+            % Angle between velocity and current direction
+            currentDir = rad2deg(acos(dot(Sog_vector,current_vector)/(norm(Sog_vector)*norm(current_vector))));
+            % magnitude of the current
+            currentSpeed = norm(current_vector);
+            
+            % Messured wind speed and direction relative to the vessel
+            curMessuredRelWindDir = mean(messuredRelWindDir(m-avrager:m+avrager));
+            curMessuredRelWindSpeed = mean(messuredRelWindSpeed(m-avrager:m+avrager));
+            
+            wave_vector = [ForecastWaveSize_data(end)*cos(deg2rad(curWaveDir));...
+                ForecastWaveSize_data(end)*sin(deg2rad(curWaveDir))];
+            wind_vector = [ForcastWindSpeed*cos(rad2deg(curWindDir));...
+                ForcastWindSpeed*sin(rad2deg(curWindDir))];
+            
+            wave_current_vector =  current_vector + wave_vector;
+            disturbance_vector = current_vector + wave_vector + wind_vector;
+            %currentDir = rad2deg(acos(dot(Sog_vector,wave_current_vector)/(norm(Sog_vector)*norm(wave_current_vector))));
+            
             % Save current data
             cog_data = cat(1, cog_data,cog);
             psi_data = cat(1, psi_data,psi);
             sog_data = cat(1, sog_data,sog);
             waveDir_data = cat(1, waveDir_data, ssa(psi+curWaveDir, 'deg'));
-            NorthCurrent_data = cat(1, NorthCurrent_data, curNorthCur);
-            EastCurrent_data = cat(1, EastCurrent_data, curEastCur);
+            NorthCurrent_data = cat(1, NorthCurrent_data, currentNorthCur);
+            EastCurrent_data = cat(1, EastCurrent_data, currentEastCur);
             relWaveDir_data = cat(1, relWaveDir_data, ssa(ssa(curWaveDir + 180,'deg') - psi , 'deg'));
             relWindDir_data = cat(1, relWindDir_data, ssa(ssa(curWindDir + 180,'deg') - psi , 'deg'));
             relWaveDirToCog_data = cat(1, relWaveDirToCog_data, ssa(ssa(curWaveDir + 180,'deg') - cog , 'deg'));
@@ -193,7 +214,9 @@ for i = 1: 9
             messuredRelWindDir_data = cat(1, messuredRelWindDir_data, curMessuredRelWindDir);
             messuredRelWindSpeed_data = cat(1, messuredRelWindSpeed_data, curMessuredRelWindSpeed);
             ForcastWindSpeed_data = cat(1, ForcastWindSpeed_data, ForcastWindSpeed);
-
+            CurrentDir_data = cat(1, CurrentDir_data, currentDir);
+            CurrentSpeed_data = cat(1, CurrentSpeed_data, currentSpeed);
+            
             if ~mod(gps_data.utc_time(m),3600) || first
                 str = sprintf('| Day: %d  | Hour: %d \t|', ...
                     (floor(curr_hour/24)+1) + gps_data.utc_day(1)-1, (mod(curr_hour,24)));
@@ -205,8 +228,13 @@ for i = 1: 9
     end
     disp('Run Success')
 end
-nninputs = [ForecastWaveSize_data relWaveDir_data relWindDir_data ...
-    ForcastWindSpeed_data ForecastWaveFreq_data];
+%%
+CorrData = [sog_data, relWaveDir_data relWindDir_data  ForcastWindSpeed_data ...
+    CurrentDir_data CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data];
+corrCoefs = corrcoef(CorrData);
+    
+nninputs =  [relWaveDir_data relWindDir_data  ForcastWindSpeed_data ...
+    CurrentDir_data CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data];
 %%
 disp('Plotting Data')
 figure(1)
@@ -237,6 +265,13 @@ xlabel 'Wind Speed',ylabel 'Relative Wind Angle',zlabel 'SOG';
 figure(5)
 scatter3(ForecastWaveSize_data,ForecastWaveFreq_data, sog_data)
 xlabel 'Wave Size',ylabel 'Wave period',zlabel 'SOG';
+figure(6)
+scatter3(CurrentDir_data,CurrentSpeed_data, sog_data)
+xlabel 'CurDir',ylabel 'CurSpeed',zlabel 'SOG';
+figure(7)
+heatmap(corrCoefs)
 disp('Done')
+
+
 
 
