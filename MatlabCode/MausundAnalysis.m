@@ -27,7 +27,7 @@ NorthCurrent_data = [];
 EastCurrent_data = [];
 CurrentDir_data = [];
 CurrentSpeed_data = [];
-
+speed_data = [];
 
 
 avrager = 4*60; % average over x min
@@ -180,9 +180,11 @@ for i = 1: 9
             
             % Velocity vector of the vessel
             Sog_vector = [sog*cos(deg2rad(cog)); sog*sin(deg2rad(cog))];
-            
+            Velocity_vector = Sog_vector - current_vector;
+            speed = norm(Velocity_vector);
+            speed_data = cat(1,speed_data,speed);
             % Angle between velocity and current direction
-            currentDir = rad2deg(acos(dot(Sog_vector,current_vector)/(norm(Sog_vector)*norm(current_vector))));
+            currentDir = rad2deg(acos(dot(Velocity_vector,current_vector)/(norm(Velocity_vector)*norm(current_vector))));
             % magnitude of the current
             currentSpeed = norm(current_vector);
             
@@ -237,7 +239,7 @@ nninputs =  [relWaveDir_data relWindDir_data  ForcastWindSpeed_data ...
     CurrentDir_data CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data];
 %%
 disp('Plotting Data')
-figure(1)
+figure;
 %scatter3(relWaveDir_data,ForecastWaveSize_data,sog_data)
 for i = 1:length(relWaveDir_data)
     if (ForecastWaveFreq_data(i) < 6)
@@ -253,23 +255,36 @@ for i = 1:length(relWaveDir_data)
 end
 xlabel 'Relative wave direction',ylabel 'Wave Size',zlabel 'SOG';
 hold off
-figure(4)
+figure;
 scatter3(relWaveDir_data,ForecastWaveFreq_data,sog_data)
 xlabel 'Relative wave direction',ylabel 'Wave period',zlabel 'SOG';
-figure(2)
+figure;
 scatter3(relWaveDir_data,relWindDir_data, sog_data)
 xlabel 'Relative wave direction',ylabel 'Relative Wind Angle',zlabel 'SOG';
-figure(3)
+figure
 scatter3(messuredRelWindSpeed_data,messuredRelWindDir_data, sog_data)
 xlabel 'Wind Speed',ylabel 'Relative Wind Angle',zlabel 'SOG';
-figure(5)
+figure
 scatter3(ForecastWaveSize_data,ForecastWaveFreq_data, sog_data)
 xlabel 'Wave Size',ylabel 'Wave period',zlabel 'SOG';
-figure(6)
+figure
 scatter3(CurrentDir_data,CurrentSpeed_data, sog_data)
 xlabel 'CurDir',ylabel 'CurSpeed',zlabel 'SOG';
-figure(7)
+figure
 heatmap(corrCoefs)
+figure
+for i = 1 : length(sog_data)
+    if CurrentDir_data(i) < 45
+    scatter3(ForecastWaveSize_data(i),ForecastWaveFreq_data(i), sog_data(i),'b')
+    elseif CurrentDir_data(i) < 135
+    scatter3(ForecastWaveSize_data(i),ForecastWaveFreq_data(i), sog_data(i),'r')
+    else 
+    scatter3(ForecastWaveSize_data(i),ForecastWaveFreq_data(i), sog_data(i),'g')
+    end
+    hold on
+end
+xlabel 'Wave Size',ylabel 'Wave period',zlabel 'SOG';
+legend('<45', '<135','<180')
 disp('Done')
 
 
