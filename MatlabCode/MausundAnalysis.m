@@ -176,15 +176,16 @@ for i = 1: 9
             % Current vector at given time and position
             currentNorthCur = currentNorth(xcurrent,ycurrent,curr_hour+1);
             currentEastCur = currentEast(xcurrent,ycurrent,curr_hour+1);
-            current_vector = [currentNorthCur;currentEastCur];
+            current_vector = [currentEastCur; currentNorthCur];
             
             % Velocity vector of the vessel
             Sog_vector = [sog*cos(deg2rad(cog)); sog*sin(deg2rad(cog))];
             Velocity_vector = Sog_vector - current_vector;
             speed = norm(Velocity_vector);
             speed_data = cat(1,speed_data,speed);
+            a = [1;0];
             % Angle between velocity and current direction
-            currentDir = rad2deg(acos(dot(Velocity_vector,current_vector)/(norm(Velocity_vector)*norm(current_vector))));
+            currentDir = rad2deg(atan2(current_vector(2), current_vector(1)) - atan2(a(2), a(1)));
             % magnitude of the current
             currentSpeed = norm(current_vector);
             
@@ -216,7 +217,7 @@ for i = 1: 9
             messuredRelWindDir_data = cat(1, messuredRelWindDir_data, curMessuredRelWindDir);
             messuredRelWindSpeed_data = cat(1, messuredRelWindSpeed_data, curMessuredRelWindSpeed);
             ForcastWindSpeed_data = cat(1, ForcastWindSpeed_data, ForcastWindSpeed);
-            CurrentDir_data = cat(1, CurrentDir_data, currentDir);
+            CurrentDir_data = cat(1, CurrentDir_data, ssa(currentDir -psi, 'deg'));
             CurrentSpeed_data = cat(1, CurrentSpeed_data, currentSpeed);
             
             if ~mod(gps_data.utc_time(m),3600) || first
@@ -268,7 +269,7 @@ figure
 scatter3(ForecastWaveSize_data,ForecastWaveFreq_data, sog_data)
 xlabel 'Wave Size',ylabel 'Wave period',zlabel 'SOG';
 figure
-scatter3(CurrentDir_data,CurrentSpeed_data, sog_data)
+scatter3(abs(CurrentDir_data),CurrentSpeed_data, sog_data)
 xlabel 'CurDir',ylabel 'CurSpeed',zlabel 'SOG';
 figure
 heatmap(corrCoefs)
@@ -285,7 +286,20 @@ for i = 1 : length(sog_data)
 end
 xlabel 'Wave Size',ylabel 'Wave period',zlabel 'SOG';
 legend('<45', '<135','<180')
+disp('Doing Neural')
+[net,perform, netError, netTrainState] = neuralNet(double(nninputs)',double(sog_data)');
+for i = 1:10
+    [temp_net, temp_perform, temp_netError, temp_netTrainState] =...
+        neuralNet(double(nninputs)',double(sog_data)');
+    if temp_perform < perform
+        net = temp_net; perform = temp_perform;
+        netError = temp_netError; netTrainState = temp_netTrainState;
+    end
+end
+disp(num2str(perform))
+figure, ploterrhist(netError)
 disp('Done')
+
 
 
 
