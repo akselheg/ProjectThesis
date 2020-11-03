@@ -156,11 +156,13 @@ for i = 1: 9
             curWaveDir = ssa(waveDir(x,y,curr_hour+1),'deg');
             curWindDir = ssa(windDir(x,y,curr_hour+1),'deg');
             ForcastWindSpeed = windSpeed(x,y,curr_hour + 1);
+            
             if waveSize(x, y, curr_hour + 1) < 0.001
                 ForecastWaveSize_data = cat(1, ForecastWaveSize_data, ForecastWaveSize_data(end));
             else
                 ForecastWaveSize_data = cat(1, ForecastWaveSize_data, waveSize(x, y, curr_hour + 1));
             end
+            
             % Wave frequency at given time and position
             ForecastWaveFreq_data = cat(1,ForecastWaveFreq_data, waveHZ(x,y,curr_hour+1));
             
@@ -175,7 +177,7 @@ for i = 1: 9
             speed = norm(Velocity_vector);
             speed_data = cat(1,speed_data,speed);
             % Angle between velocity and current direction
-            currentDir = (atan2d(current_vector(2), current_vector(1)));
+            currentDir = atan2d(current_vector(2), current_vector(1));
             % magnitude of the current
             currentSpeed = norm(current_vector);
             
@@ -352,25 +354,6 @@ legend('Wind Speed < 3', '3 < Wind Speed < 6', 'Wind Speed > 6')
 xlabel 'Measured Relative wind direction',ylabel 'sog';
 hold off
 %%
-table1 = [];table2 = [];table3 = [];
-for i = 1: length(ForecastWaveSize_data)
-    if ForecastWaveFreq_data(i) < 7
-        table1 = cat(1,table1,[ForecastWaveSize_data(i) sog_data(i)]);
-    elseif ForecastWaveFreq_data(i) < 8
-        table2 = cat(1,table2,[ForecastWaveSize_data(i) sog_data(i)]);
-    else
-        table3 = cat(1,table3,[ForecastWaveSize_data(i) sog_data(i)]);
-    end
-end
-figure;
-scatter(table1(:,1), table1(:,2))
-hold on 
-scatter(table2(:,1), table2(:,2))
-scatter(table3(:,1), table3(:,2))
-legend('Period <7', '7< Period <8', 'Period >8')
-xlabel 'Wave Size',ylabel 'sog';
-hold off
-%%
 % figure
 % scatter3((CurrentDir_data),CurrentSpeed_data, sog_data)
 % xlabel 'CurDir',ylabel 'CurSpeed',zlabel 'SOG';
@@ -436,8 +419,11 @@ hold off
 % end
 %%
 disp('Done')
-
-
-
+% 
+% 
+% figure; scatter3(speed_data, CurrentDir_data, sog_data)
+% figure; scatter3(CurrentSpeed_data, CurrentDir_data, speed_data)
+% figure; scatter3(ForecastWaveSize_data, ForecastWaveFreq_data, speed_data)
+% figure; scatter3(ForecastWaveSize_data, relWaveDir_data, speed_data)
 
 
