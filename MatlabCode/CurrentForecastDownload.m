@@ -234,6 +234,7 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "currentweatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'currentNorth', 'currentEast','longitudeCurrentMap', 'latitudeCurrentMap', 'CurrentInfo','-v7.3');
+%%
 clearvars;close all;clc;
 
 
@@ -262,8 +263,9 @@ for i = 0:numDays
         currentEast(:,:,24*i+curhour+1) = ncread(windCurrentData,'u_eastward',[1 1 1 1+curhour],[inf inf 1 1]);
     end
 end
-%%
+
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "currentweatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'currentNorth', 'currentEast','longitudeCurrentMap', 'latitudeCurrentMap', 'CurrentInfo','-v7.3');
+%%

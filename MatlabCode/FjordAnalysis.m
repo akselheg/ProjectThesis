@@ -88,7 +88,7 @@ for i = 1: 5
     for m = (15*120) : length(gps_data.sog) - (15*120)
         if ~mod(gps_data.utc_time(m),avrager)
             curr_hour = floor(double(gps_data.utc_time(m))/3600) ...
-                + 24*(double(gps_data.utc_day(m)-gps_data.utc_day(1)))
+                + 24*(double(gps_data.utc_day(m)-gps_data.utc_day(1)));
             
             % Latidtude and longitude position of the vessel
             lat = mean(rad2deg(gps_data.lat(m-avrager:m+avrager)));
@@ -100,7 +100,7 @@ for i = 1: 5
             
             % Find position in Current data
             error_map = sqrt((latitudeCurrentMap - lat).^2 + (longitudeCurrentMap - lon).^2);
-            [xcurrent,ycurrent] = find(error_map == min(error_map, [], 'all'));
+            [xcurrent,ycurrent] = find(error_map==min(error_map, [], 'all'));
             
             % Heading, Cog and Sog
             cog = rad2deg(mean(gps_data.cog(m-avrager:m+avrager)));
@@ -175,7 +175,7 @@ end
 %%
 CorrData = [sog_data, relWaveDir_data relWindDir_data  ForcastWindSpeed_data ...
     CurrentDir_data CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data];
-corrCoefs = corrcoef(CorrData);
+corrCoefs = corrcoef(CorrData,'Rows','complete');
     
 nninputs =  double([relWaveDir_data relWindDir_data  ForcastWindSpeed_data ...
     CurrentDir_data CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data])';
