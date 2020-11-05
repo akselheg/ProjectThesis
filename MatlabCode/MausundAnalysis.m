@@ -22,59 +22,63 @@ speed_data = [];
 
 
 avrager = 4*60; % average over x min
-for i = 1: 9
+for i = 2:7
     disp('Loading new data')
     %% load data
-    if i == 1
-        path = './Mausund200701_181204/';
-        addpath(path);
-        gpsFix = load('GpsFix.mat');
-        RelativeWind = load('RelativeWind.mat');
-        EulerAngles = load('EulerAngles.mat');
-        rmpath(path)
-        load('weatherData_2020-7-1_2020-7-2.mat')
-        load('currentweatherData_2020-7-1_2020-7-3.mat')
-        disp('Done loading data')
-    end
+%     if i == 1
+%         path = './Mausund200701_181204/';
+%         addpath(path);
+%         gpsFix = load('GpsFix.mat');
+%         RelativeWind = load('RelativeWind.mat');
+%         EulerAngles = load('EulerAngles.mat');
+%         rmpath(path)
+%         load('weatherData_2020-7-1_2020-7-2.mat')
+%         load('currentweatherData_2020-7-1_2020-7-3.mat')
+%         disp('Done loading data')
+%     end
     if i == 2
         path = './Mausund200701_221241/';
         addpath(path);
         gpsFix = load('GpsFix.mat');
         RelativeWind = load('RelativeWind.mat');
         EulerAngles = load('EulerAngles.mat');
+        load('weatherData_2020-7-1_2020-7-2.mat')
+        load('currentweatherData_2020-7-1_2020-7-3.mat')
         rmpath(path)
         disp('Done loading data')
     end
+%     if i == 3
+%         path = './Mausund200703_062402/';
+%         addpath(path);
+%         gpsFix = load('GpsFix.mat');
+%         RelativeWind = load('RelativeWind.mat');
+%         EulerAngles = load('EulerAngles.mat');
+%         rmpath(path)
+%         load('weatherData_2020-7-3_2020-7-4.mat')
+%         load('currentweatherData_2020-7-3_2020-7-4.mat')
+%         disp('Done loading data')
+%     end
+%     if i == 4
+%         path = './Mausund200703_080820/';
+%         addpath(path);
+%         gpsFix = load('GpsFix.mat');
+%         RelativeWind = load('RelativeWind.mat');
+%         EulerAngles = load('EulerAngles.mat');
+%         rmpath(path)
+%         disp('Done loading data')
+    %end
     if i == 3
-        path = './Mausund200703_062402/';
-        addpath(path);
-        gpsFix = load('GpsFix.mat');
-        RelativeWind = load('RelativeWind.mat');
-        EulerAngles = load('EulerAngles.mat');
-        rmpath(path)
-        load('weatherData_2020-7-3_2020-7-4.mat')
-        load('currentweatherData_2020-7-3_2020-7-4.mat')
-        disp('Done loading data')
-    end
-    if i == 4
-        path = './Mausund200703_080820/';
-        addpath(path);
-        gpsFix = load('GpsFix.mat');
-        RelativeWind = load('RelativeWind.mat');
-        EulerAngles = load('EulerAngles.mat');
-        rmpath(path)
-        disp('Done loading data')
-    end
-    if i == 5
         path = './Mausund200703_132548/';
         addpath(path);
         gpsFix = load('GpsFix.mat');
         RelativeWind = load('RelativeWind.mat');
         EulerAngles = load('EulerAngles.mat');
+        load('weatherData_2020-7-3_2020-7-4.mat')
+        load('currentweatherData_2020-7-3_2020-7-4.mat')
         rmpath(path)
         disp('Done loading data')
     end
-    if i == 6
+    if i == 4
         path = './Mausund200703_215938/';
         addpath(path);
         gpsFix = load('GpsFix.mat');
@@ -84,7 +88,7 @@ for i = 1: 9
         rmpath(path)
         disp('Done loading data')
     end
-    if i == 7
+    if i == 5
         path = './Mausund200705_120030/';
         addpath(path);
         gpsFix = load('GpsFix.mat');
@@ -95,7 +99,7 @@ for i = 1: 9
         load('currentweatherData_2020-7-5_2020-7-5.mat')
         disp('Done loading data')
     end
-    if i == 8
+    if i == 6
         path = './Mausund200706_154608/';
         addpath(path);
         gpsFix = load('GpsFix.mat');
@@ -106,7 +110,7 @@ for i = 1: 9
         load('currentweatherData_2020-7-6_2020-7-6.mat')
         disp('Done loading data')
     end
-     if i == 9
+     if i == 7
         path = './Mausund200709_53748/';
         addpath(path);
         gpsFix = load('GpsFix.mat');
@@ -130,7 +134,7 @@ for i = 1: 9
     disp('Done formating')
     disp('Start running through data')
     %% run
-    for m = (15*120) : length(gps_data.sog) - (15*120)
+    for m = (20*120) : length(gps_data.sog) - (20*120)
         if ~mod(gps_data.utc_time(m),avrager)
             curr_hour = floor(double(gps_data.utc_time(m))/3600) ...
                 + 24*(double(gps_data.utc_day(m)-gps_data.utc_day(1)));
@@ -138,6 +142,11 @@ for i = 1: 9
             % Latidtude and longitude position of the vessel
             lat = mean(rad2deg(gps_data.lat(m-avrager:m+avrager)));
             lon = mean(rad2deg(gps_data.lon(m-avrager:m+avrager)));
+            
+            % Heading, Cog and Sog
+            cog = rad2deg(mean(gps_data.cog(m-avrager:m+avrager)));
+            psi = rad2deg(mean(EulerAngles.psi(m-avrager:m+avrager)));
+            sog = mean(gps_data.sog(m-avrager:m+avrager));
 
             % Find position in wave data
             error_map = sqrt((latitudeMapWave - lat).^2 + (longitudeMapWave - lon).^2);
@@ -146,11 +155,6 @@ for i = 1: 9
             % Find position in Current data
             error_map = sqrt((latitudeCurrentMap - lat).^2 + (longitudeCurrentMap - lon).^2);
             [xcurrent,ycurrent] = find(error_map == min(error_map, [], 'all'));
-            
-            % Heading, Cog and Sog
-            cog = rad2deg(mean(gps_data.cog(m-avrager:m+avrager)));
-            psi = rad2deg(mean(EulerAngles.psi(m-avrager:m+avrager)));
-            sog = mean(gps_data.sog(m-avrager:m+avrager));
             
             % Wind and wave directions and size at given time and postion
             curWaveDir = ssa(waveDir(x,y,curr_hour+1),'deg');
@@ -177,7 +181,9 @@ for i = 1: 9
             speed = norm(Velocity_vector);
             speed_data = cat(1,speed_data,speed);
             % Angle between velocity and current direction
-            currentDir = atan2d(current_vector(2), current_vector(1));
+            currentDir = atan2d( current_vector(2), current_vector(1));
+            VelDir = atan2d( Velocity_vector(2), Velocity_vector(1));
+            CurVsVelAnglre = VelDir- currentDir;
             % magnitude of the current
             currentSpeed = norm(current_vector);
             
@@ -203,7 +209,7 @@ for i = 1: 9
             messuredRelWindDir_data = cat(1, messuredRelWindDir_data, curMessuredRelWindDir);
             messuredRelWindSpeed_data = cat(1, messuredRelWindSpeed_data, curMessuredRelWindSpeed);
             ForcastWindSpeed_data = cat(1, ForcastWindSpeed_data, ForcastWindSpeed);
-            CurrentDir_data = cat(1, CurrentDir_data, ssa(ssa(currentDir - psi,'deg'), 'deg'));
+            CurrentDir_data = cat(1, CurrentDir_data, ssa(ssa(currentDir - cog,'deg'), 'deg'));
             CurrentSpeed_data = cat(1, CurrentSpeed_data, currentSpeed);
             
             if ~mod(gps_data.utc_time(m),3600) || first
@@ -230,7 +236,7 @@ table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveSize_data)
     if ForecastWaveSize_data(i) < 2
         table1 = cat(1,table1,[relWaveDir_data(i) sog_data(i)]);
-    elseif ForecastWaveSize_data(i) < 3
+    elseif ForecastWaveSize_data(i) < 2.5
         table2 = cat(1,table2,[relWaveDir_data(i) sog_data(i)]);
     else
         table3 = cat(1,table3,[relWaveDir_data(i) sog_data(i)]);
@@ -265,7 +271,7 @@ scatter(table1(:,1), table1(:,2))
 hold on 
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
-legend('Period < 6.5', '7< Period <8', 'Period >8')
+legend('Period < 6.5', '7< Period < 8', 'Period > 8')
 xlabel 'Relative wave direction',ylabel 'sog';
 hold off
 %%
@@ -397,7 +403,7 @@ for i = 1 : length(sog_data)
 end
 ylabel 'SOG' ; xlabel 'Sample'; title 'Speed at desired environment'
 hold off
-%%
+% %%
 % disp('Doing Neural')
 % [net,perform, netError, netTrainState] = neuralNet(nninputs, double(sog_data)');
 % for i = 1:10
@@ -417,6 +423,26 @@ hold off
 %         disp([num2str(sog_data(i)) num2str(x)])
 %     end
 % end
+
+%%
+table1 = [];table2 = [];table3 = [];
+for i = 1: length(ForecastWaveFreq_data)
+    if sog_data(i) > 0.8
+        table1 = cat(1,table1,[CurrentDir_data(i) CurrentSpeed_data(i)]);
+    elseif ForecastWaveFreq_data(i) < 8
+        table2 = cat(1,table2,[relWaveDir_data(i) sog_data(i)]);
+    else
+        table3 = cat(1,table3,[relWaveDir_data(i) sog_data(i)]);
+    end
+end
+figure;
+scatter(table1(:,1), table1(:,2))
+hold on 
+%scatter(table2(:,1), table2(:,2))
+%scatter(table3(:,1), table3(:,2))
+%legend('Period < 6.5', '7< Period < 8', 'Period > 8')
+xlabel 'Relative wave direction',ylabel 'freq';
+hold off
 %%
 disp('Done')
 % 

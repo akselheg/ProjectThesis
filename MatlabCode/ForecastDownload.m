@@ -49,24 +49,21 @@ for i = 0:numDays
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
     windSpeed(:,:,24*i+19:24*i+42) = ncread(waveData,'ff');
 end
-%%
-
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
+
+%%
 clearvars;close all;clc;
 
 
 startDate = [2020, 07, 03];
 endDate = [2020, 07, 04];
-%place = "vestlandet";
 place = "midtnorge";
 ch = char(place);
 ch = string(ch(1));
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_vestlandet.an.2019052818.nc
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_midtnorge.an.2020021918.nc
-                  %     /thredds/dodsC/fou-hi/mywavewam800mhf/mywavewam800_midtnorge.an.2020022018.nc
+
 startDateString = string(startDate(1)) + "/" + string(startDate(2)) + "/" + string(startDate(3));
 endDateString = string(endDate(1)) + "/" + string(endDate(2)) + "/" + string(endDate(3));
 numDays = daysact(startDateString, endDateString);
@@ -106,24 +103,22 @@ for i = 0:numDays
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
     windSpeed(:,:,24*i+19:24*i+42) = ncread(waveData,'ff');
 end
-%%
 
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
+
+%% 
 clearvars;close all;clc;
 
 
 startDate = [2020, 07, 05];
 endDate = [2020, 07, 05];
-%place = "vestlandet";
 place = "midtnorge";
 ch = char(place);
 ch = string(ch(1));
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_vestlandet.an.2019052818.nc
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_midtnorge.an.2020021918.nc
-                  %     /thredds/dodsC/fou-hi/mywavewam800mhf/mywavewam800_midtnorge.an.2020022018.nc
+
 startDateString = string(startDate(1)) + "/" + string(startDate(2)) + "/" + string(startDate(3));
 endDateString = string(endDate(1)) + "/" + string(endDate(2)) + "/" + string(endDate(3));
 numDays = daysact(startDateString, endDateString);
@@ -163,24 +158,21 @@ for i = 0:numDays
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
     windSpeed(:,:,24*i+19:24*i+42) = ncread(waveData,'ff');
 end
-%%
-
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
+
+%%
 clearvars;close all;clc;
 
 
 startDate = [2020, 07, 06];
 endDate = [2020, 07, 06];
-%place = "vestlandet";
 place = "midtnorge";
 ch = char(place);
 ch = string(ch(1));
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_vestlandet.an.2019052818.nc
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_midtnorge.an.2020021918.nc
-                  %     /thredds/dodsC/fou-hi/mywavewam800mhf/mywavewam800_midtnorge.an.2020022018.nc
+
 startDateString = string(startDate(1)) + "/" + string(startDate(2)) + "/" + string(startDate(3));
 endDateString = string(endDate(1)) + "/" + string(endDate(2)) + "/" + string(endDate(3));
 numDays = daysact(startDateString, endDateString);
@@ -220,24 +212,22 @@ for i = 0:numDays
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
     windSpeed(:,:,24*i+19:24*i+42) = ncread(waveData,'ff');
 end
-%%
 
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
+
+%%
 clearvars;close all;clc;
 
 
 startDate = [2020, 07, 09];
 endDate = [2020, 07, 09];
-%place = "vestlandet";
 place = "midtnorge";
 ch = char(place);
 ch = string(ch(1));
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_vestlandet.an.2019052818.nc
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_midtnorge.an.2020021918.nc
-                  %     /thredds/dodsC/fou-hi/mywavewam800mhf/mywavewam800_midtnorge.an.2020022018.nc
+
 startDateString = string(startDate(1)) + "/" + string(startDate(2)) + "/" + string(startDate(3));
 endDateString = string(endDate(1)) + "/" + string(endDate(2)) + "/" + string(endDate(3));
 numDays = daysact(startDateString, endDateString);
@@ -277,25 +267,21 @@ for i = 0:numDays
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
     windSpeed(:,:,24*i+19:24*i+42) = ncread(waveData,'ff');
 end
-%%
 
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
 
+%%
 clearvars;close all;clc;
 
 
 startDate = [2020, 05, 28];
 endDate = [2020, 05, 28];
 place = "vestlandet";
-%place = "midtnorge";
 ch = char(place);
 ch = string(ch(1));
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_vestlandet.an.2019052818.nc
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_midtnorge.an.2020021918.nc
-                  %     /thredds/dodsC/fou-hi/mywavewam800mhf/mywavewam800_midtnorge.an.2020022018.nc
 startDateString = string(startDate(1)) + "/" + string(startDate(2)) + "/" + string(startDate(3));
 endDateString = string(endDate(1)) + "/" + string(endDate(2)) + "/" + string(endDate(3));
 numDays = daysact(startDateString, endDateString);
@@ -335,25 +321,22 @@ for i = 0:numDays
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
     windSpeed(:,:,24*i+19:24*i+42) = ncread(waveData,'ff');
 end
-%%
 
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
 
+%%
 clearvars;close all;clc;
 
 
 startDate = [2020, 02, 20];
 endDate = [2020, 02, 20];
-%place = "vestlandet";
 place = "midtnorge";
 ch = char(place);
 ch = string(ch(1));
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_vestlandet.an.2019052818.nc
-% https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800vhf/mywavewam800_midtnorge.an.2020021918.nc
-                  %     /thredds/dodsC/fou-hi/mywavewam800mhf/mywavewam800_midtnorge.an.2020022018.nc
+
 startDateString = string(startDate(1)) + "/" + string(startDate(2)) + "/" + string(startDate(3));
 endDateString = string(endDate(1)) + "/" + string(endDate(2)) + "/" + string(endDate(3));
 numDays = daysact(startDateString, endDateString);
@@ -393,7 +376,6 @@ for i = 0:numDays
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
     windSpeed(:,:,24*i+19:24*i+42) = ncread(waveData,'ff');
 end
-%%
 
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
