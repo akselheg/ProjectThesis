@@ -169,7 +169,9 @@ for i = 2:7
             
             % Wave frequency at given time and position
             ForecastWaveFreq_data = cat(1,ForecastWaveFreq_data, waveHZ(x,y,curr_hour+1));
-            
+            if waveHZ(x,y,curr_hour+1) < 0.1 
+                disp([num2str(waveHZ(x,y,curr_hour+1)) num2str(lat) num2str(lon)])
+            end
             % Current vector at given time and position
             currentNorthCur = currentNorth(xcurrent,ycurrent,curr_hour+1);
             currentEastCur = currentEast(xcurrent,ycurrent,curr_hour+1);
@@ -204,12 +206,12 @@ for i = 2:7
             cog_data = cat(1, cog_data,cog);
             psi_data = cat(1, psi_data,psi);
             sog_data = cat(1, sog_data,sog);
-            relWaveDir_data = cat(1, relWaveDir_data, ssa(ssa(curWaveDir- psi, 'deg') - 180 , 'deg'));
+            relWaveDir_data = cat(1, relWaveDir_data, ssa(ssa(curWaveDir - psi, 'deg') - 180 , 'deg'));
             relWindDir_data = cat(1, relWindDir_data, ssa(ssa(curWindDir - psi, 'deg') - 180 , 'deg'));
             messuredRelWindDir_data = cat(1, messuredRelWindDir_data, curMessuredRelWindDir);
             messuredRelWindSpeed_data = cat(1, messuredRelWindSpeed_data, curMessuredRelWindSpeed);
             ForcastWindSpeed_data = cat(1, ForcastWindSpeed_data, ForcastWindSpeed);
-            CurrentDir_data = cat(1, CurrentDir_data, ssa(ssa(currentDir - cog,'deg'), 'deg'));
+            CurrentDir_data = cat(1, CurrentDir_data, ssa(ssa(currentDir - psi,'deg'), 'deg'));
             CurrentSpeed_data = cat(1, CurrentSpeed_data, currentSpeed);
             
             if ~mod(gps_data.utc_time(m),3600) || first
@@ -224,8 +226,8 @@ for i = 2:7
     disp('Run Success')
 end
 %%
-CorrData = [sog_data, relWaveDir_data relWindDir_data  ForcastWindSpeed_data ...
-    CurrentDir_data CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data];
+CorrData = [sog_data, abs(relWaveDir_data) abs(relWindDir_data)  ForcastWindSpeed_data ...
+    abs(CurrentDir_data) CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data];
 corrCoefs = corrcoef(CorrData);
     
 nninputs =  double([relWaveDir_data relWindDir_data  ForcastWindSpeed_data ...
@@ -393,7 +395,7 @@ h.Title = 'Covariance Matrix';
 figure;
 count = 0;
 for i = 1 : length(sog_data)
-    if ForecastWaveFreq_data(i) < 7.5 && ForecastWaveSize_data(i) > 3 ...
+    if ForecastWaveFreq_data(i) < 6 && ForecastWaveSize_data(i) > 4 ...
             && messuredRelWindSpeed_data(i) > 3 && abs(relWindDir_data(i)) > 120 ...
             && CurrentSpeed_data(i) < 0.2
         plot(count,sog_data(i), 'o')

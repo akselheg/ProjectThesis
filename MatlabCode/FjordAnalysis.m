@@ -20,7 +20,7 @@ CurrentDir_data = [];
 CurrentSpeed_data = [];
 speed_data = [];
 
-avrager = 1*60; % average over x min
+avrager = 2*60; % average over x min
 for i = 1: 4
     %% load data
     if i == 1
@@ -143,12 +143,12 @@ for i = 1: 4
             cog_data = cat(1, cog_data,cog);
             psi_data = cat(1, psi_data,psi);
             sog_data = cat(1, sog_data,sog);
-            relWaveDir_data = cat(1, relWaveDir_data, ssa(ssa(curWaveDir- psi, 'deg') - 180 , 'deg'));
-            relWindDir_data = cat(1, relWindDir_data, ssa(ssa(curWindDir - psi, 'deg') - 180 , 'deg'));
+            relWaveDir_data = cat(1, relWaveDir_data, ssa(ssa(curWaveDir - cog, 'deg') - 180 , 'deg'));
+            relWindDir_data = cat(1, relWindDir_data, ssa(ssa(curWindDir - cog, 'deg') - 180 , 'deg'));
             messuredRelWindDir_data = cat(1, messuredRelWindDir_data, curMessuredRelWindDir);
             messuredRelWindSpeed_data = cat(1, messuredRelWindSpeed_data, curMessuredRelWindSpeed);
             ForcastWindSpeed_data = cat(1, ForcastWindSpeed_data, ForcastWindSpeed);
-            CurrentDir_data = cat(1, CurrentDir_data, ssa(ssa(currentDir - psi,'deg'), 'deg'));
+            CurrentDir_data = cat(1, CurrentDir_data, ssa(ssa(currentDir - cog,'deg'), 'deg'));
             CurrentSpeed_data = cat(1, CurrentSpeed_data, currentSpeed);
             
             if ~mod(gps_data.utc_time(m),3600) || first
@@ -163,9 +163,9 @@ for i = 1: 4
     disp('Run Success')
 end
 %%
-CorrData = [sog_data, relWaveDir_data relWindDir_data  ForcastWindSpeed_data ...
-    CurrentDir_data CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data];
-corrCoefs = corrcoef(CorrData,'Rows','complete');
+CorrData = [sog_data, abs(relWaveDir_data) abs(relWindDir_data) ForcastWindSpeed_data ...
+    abs(CurrentDir_data) CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data];
+corrCoefs = corrcoef(CorrData);%,'Rows','complete');
     
 nninputs =  double([relWaveDir_data relWindDir_data  ForcastWindSpeed_data ...
     CurrentDir_data CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data])';
@@ -282,7 +282,7 @@ hold off
 % xlabel 'Wind Speed',ylabel 'Relative Wind Angle',zlabel 'SOG'
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(messuredRelWindSpeed_data)
-    if messuredRelWindSpeed_data(i) < 6
+    if messuredRelWindSpeed_data(i) < 7
         table1 = cat(1,table1,[messuredRelWindDir_data(i) sog_data(i)]);
     elseif messuredRelWindSpeed_data(i) < 9
         table2 = cat(1,table2,[messuredRelWindDir_data(i) sog_data(i)]);
@@ -295,7 +295,7 @@ scatter(table1(:,1), table1(:,2))
 hold on 
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
-legend('Wind Speed < 2.5', '2.5 < Wind Speed < 4.5', 'Wind Speed > 4.5')
+legend('Wind Speed < 7', '7 < Wind Speed < 9', 'Wind Speed > 9')
 xlabel 'Measured Relative wind direction',ylabel 'sog';
 hold off
 %%

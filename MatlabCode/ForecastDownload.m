@@ -1,3 +1,4 @@
+%%
 clearvars;close all;clc;
 
 
@@ -53,9 +54,10 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-
+pause(1);
+disp('Done');
 %%
-clearvars;close all;clc;
+clearvars;close all;
 
 
 startDate = [2020, 07, 03];
@@ -108,9 +110,10 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-
+pause(1);
+disp('Done2');
 %% 
-clearvars;close all;clc;
+clearvars;close all;
 
 
 startDate = [2020, 07, 05];
@@ -158,13 +161,15 @@ for i = 0:numDays
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
     windSpeed(:,:,24*i+19:24*i+42) = ncread(waveData,'ff');
 end
+
 startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + string(startDate(3));
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-
+pause(1);
+disp('Done3');
 %%
-clearvars;close all;clc;
+clearvars;close all;
 
 
 startDate = [2020, 07, 06];
@@ -217,9 +222,10 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-
+pause(1);
+disp('Done4');
 %%
-clearvars;close all;clc;
+clearvars;close all;
 
 
 startDate = [2020, 07, 09];
@@ -272,9 +278,10 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-
+pause(1);
+disp('Done5');
 %%
-clearvars;close all;clc;
+clearvars;close all;
 
 
 startDate = [2020, 05, 28];
@@ -282,6 +289,7 @@ endDate = [2020, 05, 28];
 place = "vestlandet";
 ch = char(place);
 ch = string(ch(1));
+
 startDateString = string(startDate(1)) + "/" + string(startDate(2)) + "/" + string(startDate(3));
 endDateString = string(endDate(1)) + "/" + string(endDate(2)) + "/" + string(endDate(3));
 numDays = daysact(startDateString, endDateString);
@@ -326,9 +334,10 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-
+pause(1);
+disp('Done6');
 %%
-clearvars;close all;clc;
+clearvars;close all;
 
 
 startDate = [2020, 02, 20];
@@ -381,3 +390,5 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
+pause(1);
+disp('DoneDone');

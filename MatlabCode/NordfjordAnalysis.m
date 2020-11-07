@@ -200,7 +200,7 @@ scatter(table1(:,1), table1(:,2))
 hold on 
 scatter(table2(:,1), table2(:,2))
 %scatter(table3(:,1), table3(:,2))
-legend('Wave Size < 0.17', '0.17 < Wave Size < 0.3')%, 'Wave Size > 0.3')
+legend('Wave Size < 0.13', '0.13 < Wave Size < 0.3')%, 'Wave Size > 0.3')
 xlabel 'Wave period',ylabel 'sog';
 hold off
 %%
@@ -219,7 +219,7 @@ scatter(table1(:,1), table1(:,2))
 hold on 
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
-legend('Wave Period < 1.4', '1.4 < Wave Period < 1.7', 'Wave Period > 1.7')
+legend('Wave Period < 1.3', '1.3 < Wave Period < 1.4', 'Wave Period > 1.4')
 xlabel 'Wave Size',ylabel 'sog';
 hold off
 %%
@@ -241,7 +241,7 @@ scatter(table1(:,1), table1(:,2))
 hold on 
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
-legend('Wind Speed < 2.5', '2.5 < Wind Speed < 4.5', 'Wind Speed > 4.5')
+legend('Wind Speed < 2', '2 < Wind Speed < 3', 'Wind Speed > 3')
 xlabel 'Relative wind direction',ylabel 'sog';
 hold off
 %%
@@ -263,7 +263,7 @@ scatter(table1(:,1), table1(:,2))
 hold on 
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
-legend('Wind Speed < 2.5', '2.5 < Wind Speed < 4.5', 'Wind Speed > 4.5')
+legend('Wind Speed < 2', '2 < Wind Speed < 3', 'Wind Speed > 3')
 xlabel 'Measured Relative wind direction',ylabel 'sog';
 hold off
 %%
@@ -285,7 +285,7 @@ scatter(table1(:,1), table1(:,2))
 hold on 
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
-legend('Curent speed < 0.05', '0.05 < Curent speed < 0.12', 'Curent speed > 0.12')
+legend('Curent speed < 0.05', '0.05 < Curent speed < 0.1', 'Curent speed > 0.1')
 xlabel 'Relative Current angle',ylabel 'sog';
 hold off
 %%
