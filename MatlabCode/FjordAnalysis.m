@@ -18,7 +18,8 @@ ForecastWaveFreq_data = [];
 ForcastWindSpeed_data = [];
 CurrentDir_data = [];
 CurrentSpeed_data = [];
-speed_data = [];
+Vr_data = [];
+Vr_data = [];
 
 avrager = 2*60; % average over x min
 for i = 1: 4
@@ -114,17 +115,18 @@ for i = 1: 4
             % Current vector at given time and position
             currentNorthCur = currentNorth(xcurrent,ycurrent,curr_hour+1);
             currentEastCur = currentEast(xcurrent,ycurrent,curr_hour+1);
-            current_vector = [currentNorthCur; currentEastCur];
+            Vc = [currentNorthCur; currentEastCur];
             
             % Velocity vector of the vessel
-            Sog_vector = [sog*cos(deg2rad(cog)); sog*sin(deg2rad(cog))];
-            Velocity_vector = Sog_vector - current_vector;
-            speed = norm(Velocity_vector);
-            speed_data = cat(1,speed_data,speed);
+            Vg = [sog*cos(deg2rad(cog)); sog*sin(deg2rad(cog))];
+            Vr = Vg - Vc;
+            VrSpeed = norm(Vr);
+            Vr_data = cat(1,Vr_data,VrSpeed);
+            VrDir = atan2d(Vr(2), Vr(1));
             % Angle between velocity and current direction
-            currentDir = atan2d(current_vector(2), current_vector(1));
+            currentDir = atan2d(Vc(2), Vc(1));
             % magnitude of the current
-            currentSpeed = norm(current_vector);
+            currentSpeed = norm(Vc);
             
             % Messured wind speed and direction relative to the vessel
             curMessuredRelWindDir = mean(messuredRelWindDir(m-avrager:m+avrager));
@@ -135,20 +137,20 @@ for i = 1: 4
             wind_vector = [ForcastWindSpeed*cos(rad2deg(curWindDir));...
                 ForcastWindSpeed*sin(rad2deg(curWindDir))];
             
-            wave_current_vector =  current_vector + wave_vector;
-            disturbance_vector = current_vector + wave_vector + wind_vector;
+            wave_current_vector =  Vc + wave_vector;
+            disturbance_vector = Vc + wave_vector + wind_vector;
             %currentDir = rad2deg(acos(dot(Sog_vector,wave_current_vector)/(norm(Sog_vector)*norm(wave_current_vector))));
             
             % Save current data
             cog_data = cat(1, cog_data,cog);
             psi_data = cat(1, psi_data,psi);
             sog_data = cat(1, sog_data,sog);
-            relWaveDir_data = cat(1, relWaveDir_data, ssa(ssa(curWaveDir - cog, 'deg') - 180 , 'deg'));
-            relWindDir_data = cat(1, relWindDir_data, ssa(ssa(curWindDir - cog, 'deg') - 180 , 'deg'));
+            relWaveDir_data = cat(1, relWaveDir_data, ssa(ssa(curWaveDir - psi, 'deg') - 180 , 'deg'));
+            relWindDir_data = cat(1, relWindDir_data, ssa(ssa(curWindDir - psi, 'deg') - 180 , 'deg'));
             messuredRelWindDir_data = cat(1, messuredRelWindDir_data, curMessuredRelWindDir);
             messuredRelWindSpeed_data = cat(1, messuredRelWindSpeed_data, curMessuredRelWindSpeed);
             ForcastWindSpeed_data = cat(1, ForcastWindSpeed_data, ForcastWindSpeed);
-            CurrentDir_data = cat(1, CurrentDir_data, ssa(ssa(currentDir - cog,'deg'), 'deg'));
+            CurrentDir_data = cat(1, CurrentDir_data, ssa(ssa(currentDir - psi,'deg'), 'deg'));
             CurrentSpeed_data = cat(1, CurrentSpeed_data, currentSpeed);
             
             if ~mod(gps_data.utc_time(m),3600) || first
@@ -163,7 +165,7 @@ for i = 1: 4
     disp('Run Success')
 end
 %%
-CorrData = [sog_data, abs(relWaveDir_data) abs(relWindDir_data) ForcastWindSpeed_data ...
+CorrData = [Vr_data, abs(relWaveDir_data) abs(relWindDir_data) ForcastWindSpeed_data ...
     abs(CurrentDir_data) CurrentSpeed_data ForecastWaveFreq_data ForecastWaveSize_data];
 corrCoefs = corrcoef(CorrData);%,'Rows','complete');
     
@@ -174,11 +176,11 @@ disp('Plotting Data')
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveSize_data)
     if ForecastWaveSize_data(i) < 0.17
-        table1 = cat(1,table1,[relWaveDir_data(i) sog_data(i)]);
+        table1 = cat(1,table1,[relWaveDir_data(i) Vr_data(i)]);
     elseif ForecastWaveSize_data(i) < 0.3
-        table2 = cat(1,table2,[relWaveDir_data(i) sog_data(i)]);
+        table2 = cat(1,table2,[relWaveDir_data(i) Vr_data(i)]);
     else
-        table3 = cat(1,table3,[relWaveDir_data(i) sog_data(i)]);
+        table3 = cat(1,table3,[relWaveDir_data(i) Vr_data(i)]);
     end
 end
 figure;
@@ -187,7 +189,7 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 legend('Wave Size < 0.17', '0.17 < Wave Size < 0.3', 'Wave Size > 0.3')
-xlabel 'Relative wave direction',ylabel 'sog';
+xlabel 'Relative wave direction',ylabel '|Vr|';
 hold off
 
 %% 
@@ -198,11 +200,11 @@ hold off
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveFreq_data)
     if ForecastWaveFreq_data(i) < 1.4
-        table1 = cat(1,table1,[relWaveDir_data(i) sog_data(i)]);
+        table1 = cat(1,table1,[relWaveDir_data(i) Vr_data(i)]);
     elseif ForecastWaveFreq_data(i) < 1.7
-        table2 = cat(1,table2,[relWaveDir_data(i) sog_data(i)]);
+        table2 = cat(1,table2,[relWaveDir_data(i) Vr_data(i)]);
     else
-        table3 = cat(1,table3,[relWaveDir_data(i) sog_data(i)]);
+        table3 = cat(1,table3,[relWaveDir_data(i) Vr_data(i)]);
     end
 end
 figure;
@@ -211,7 +213,7 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 legend('Period < 1.4', '1.4 < Period < 1.7', 'Period > 1.7')
-xlabel 'Relative wave direction',ylabel 'sog';
+xlabel 'Relative wave direction',ylabel '|Vr|';
 hold off
 %%
 % figure;
@@ -220,11 +222,11 @@ hold off
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveSize_data)
     if ForecastWaveSize_data(i) < 0.17
-        table1 = cat(1,table1,[ForecastWaveFreq_data(i) sog_data(i)]);
+        table1 = cat(1,table1,[ForecastWaveFreq_data(i) Vr_data(i)]);
     elseif ForecastWaveSize_data(i) < 0.3
-        table2 = cat(1,table2,[ForecastWaveFreq_data(i) sog_data(i)]);
+        table2 = cat(1,table2,[ForecastWaveFreq_data(i) Vr_data(i)]);
     else
-        table3 = cat(1,table3,[ForecastWaveFreq_data(i) sog_data(i)]);
+        table3 = cat(1,table3,[ForecastWaveFreq_data(i) Vr_data(i)]);
     end
 end
 figure;
@@ -233,17 +235,17 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 legend('Wave Size < 0.17', '0.17 < Wave Size < 0.3', 'Wave Size > 0.3')
-xlabel 'Wave period',ylabel 'sog';
+xlabel 'Wave period',ylabel '|Vr|';
 hold off
 %%
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveSize_data)
     if ForecastWaveFreq_data(i) < 1.4
-        table1 = cat(1,table1,[ForecastWaveSize_data(i) sog_data(i)]);
+        table1 = cat(1,table1,[ForecastWaveSize_data(i) Vr_data(i)]);
     elseif ForecastWaveFreq_data(i) < 1.7
-        table2 = cat(1,table2,[ForecastWaveSize_data(i) sog_data(i)]);
+        table2 = cat(1,table2,[ForecastWaveSize_data(i) Vr_data(i)]);
     else
-        table3 = cat(1,table3,[ForecastWaveSize_data(i) sog_data(i)]);
+        table3 = cat(1,table3,[ForecastWaveSize_data(i) Vr_data(i)]);
     end
 end
 figure;
@@ -252,7 +254,7 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 legend('Wave Period < 1.4', '1.4 < Wave Period < 1.7', 'Wave Period > 1.7')
-xlabel 'Wave Size',ylabel 'sog';
+xlabel 'Wave Size',ylabel '|Vr|';
 hold off
 %%
 % figure
@@ -261,11 +263,11 @@ hold off
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForcastWindSpeed_data)
     if ForcastWindSpeed_data(i) < 2.5
-        table1 = cat(1,table1,[relWindDir_data(i) sog_data(i)]);
+        table1 = cat(1,table1,[relWindDir_data(i) Vr_data(i)]);
     elseif ForcastWindSpeed_data(i) < 4.5
-        table2 = cat(1,table2,[relWindDir_data(i) sog_data(i)]);
+        table2 = cat(1,table2,[relWindDir_data(i) Vr_data(i)]);
     else
-        table3 = cat(1,table3,[relWindDir_data(i) sog_data(i)]);
+        table3 = cat(1,table3,[relWindDir_data(i) Vr_data(i)]);
     end
 end
 figure;
@@ -274,7 +276,7 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 legend('Wind Speed < 2.5', '2.5 < Wind Speed < 4.5', 'Wind Speed > 4.5')
-xlabel 'Relative wind direction',ylabel 'sog';
+xlabel 'Relative wind direction',ylabel '|Vr|';
 hold off
 %%
 % figure
@@ -283,11 +285,11 @@ hold off
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(messuredRelWindSpeed_data)
     if messuredRelWindSpeed_data(i) < 7
-        table1 = cat(1,table1,[messuredRelWindDir_data(i) sog_data(i)]);
+        table1 = cat(1,table1,[messuredRelWindDir_data(i) Vr_data(i)]);
     elseif messuredRelWindSpeed_data(i) < 9
-        table2 = cat(1,table2,[messuredRelWindDir_data(i) sog_data(i)]);
+        table2 = cat(1,table2,[messuredRelWindDir_data(i) Vr_data(i)]);
     else
-        table3 = cat(1,table3,[messuredRelWindDir_data(i) sog_data(i)]);
+        table3 = cat(1,table3,[messuredRelWindDir_data(i) Vr_data(i)]);
     end
 end
 figure;
@@ -296,7 +298,7 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 legend('Wind Speed < 7', '7 < Wind Speed < 9', 'Wind Speed > 9')
-xlabel 'Measured Relative wind direction',ylabel 'sog';
+xlabel 'Measured Relative wind direction',ylabel '|Vr|';
 hold off
 %%
 % figure
@@ -305,11 +307,11 @@ hold off
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(CurrentSpeed_data)
     if CurrentSpeed_data(i) < 0.05
-        table1 = cat(1,table1,[CurrentDir_data(i) sog_data(i)]);
+        table1 = cat(1,table1,[CurrentDir_data(i) Vr_data(i)]);
     elseif CurrentSpeed_data(i) < 0.12
-        table2 = cat(1,table2,[CurrentDir_data(i) sog_data(i)]);
+        table2 = cat(1,table2,[CurrentDir_data(i) Vr_data(i)]);
     else
-        table3 = cat(1,table3,[CurrentDir_data(i) sog_data(i)]);
+        table3 = cat(1,table3,[CurrentDir_data(i) Vr_data(i)]);
     end
 end
 figure;
@@ -318,11 +320,11 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 legend('Curent speed < 0.05', '0.05 < Curent speed < 0.12', 'Curent speed > 0.12')
-xlabel 'Relative Current angle',ylabel 'sog';
+xlabel 'Relative Current angle',ylabel '|Vr|';
 hold off
 %%
 figure
-yvalues = {'Sog','relWaveDir','relWindDir','ForcastWindSpeed',...
+yvalues = {'|Vr|','relWaveDir','relWindDir','ForcastWindSpeed',...
     'CurrentDir', 'CurrentSpeed', 'ForecastWaveFreq', 'ForecastWaveSize'};
 xvalues = {'Sog','relWaveDir','relWindDir','ForcastWindSpeed',...
     'CurrentDir', 'CurrentSpeed', 'ForecastWaveFreq', 'ForecastWaveSize'};
