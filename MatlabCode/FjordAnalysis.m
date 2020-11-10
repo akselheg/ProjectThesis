@@ -344,26 +344,26 @@ h.Title = 'Covariance Matrix';
 % end
 % ylabel 'SOG' ; xlabel 'Sample'; title 'Speed at desired environment'
 % hold off
+%
+disp('Doing Neural')
+[net,perform, netError, netTrainState] = neuralNet(nninputs, double(sog_data)');
+for i = 1:10
+    [temp_net, temp_perform, temp_netError, temp_netTrainState] =...
+        neuralNet(nninputs,double(sog_data)');
+    if temp_perform < perform
+        net = temp_net; perform = temp_perform;
+        netError = temp_netError; netTrainState = temp_netTrainState;
+    end
+end
+disp(num2str(perform))
+figure, ploterrhist(netError)
 %%
-% disp('Doing Neural')
-% [net,perform, netError, netTrainState] = neuralNet(nninputs, double(sog_data)');
-% for i = 1:10
-%     [temp_net, temp_perform, temp_netError, temp_netTrainState] =...
-%         neuralNet(nninputs,double(sog_data)');
-%     if temp_perform < perform
-%         net = temp_net; perform = temp_perform;
-%         netError = temp_netError; netTrainState = temp_netTrainState;
-%     end
-% end
-% disp(num2str(perform))
-% figure, ploterrhist(netError)
-% %%
-% for i = 1: length(sog_data)
-%     if sog_data(i)> 0.8
-%         x = net(nninputs(:,i));
-%         disp([num2str(sog_data(i)) num2str(x)])
-%     end
-% end
+for i = 1: length(sog_data)
+    if sog_data(i)> 0.8
+        x = net(nninputs(:,i));
+        disp([num2str(sog_data(i)) num2str(x)])
+    end
+end
 %%
 disp('Done')
 % 

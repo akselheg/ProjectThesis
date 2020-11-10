@@ -17,7 +17,7 @@ function [net, performance, e, tr] = neuralNet(x,t)
 trainFcn = 'trainbr';
 
 % Create a Fitting Network
-hiddenLayerSize = 15;
+hiddenLayerSize = 8;
 net = fitnet(hiddenLayerSize,trainFcn);
 
 % Setup Division of Data for Training, Validation, Testing
