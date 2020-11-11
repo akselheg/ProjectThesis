@@ -35,7 +35,7 @@ for i = 0:numDays
         waveHZ = zeros(waveDimentions); 
         windSpeed = zeros(waveDimentions); 
         
-        waveSize(:,:,1:18) = ncread(waveData,'mHs', [1 1 7], [inf inf inf]);
+        waveSize(:,:,1:18) = ncread(waveData,'hs', [1 1 7], [inf inf inf]);
         waveDir(:,:,1:18) = ncread(waveData,'thq', [1 1 7], [inf inf inf]); % I believe thq is total wave dir
         windDir(:,:,1:18) = ncread(waveData,'dd', [1 1 7], [inf inf inf]);
         waveHZ(:,:,1:18) = ncread(waveData,'tp', [1 1 7], [inf inf inf]);
@@ -44,7 +44,7 @@ for i = 0:numDays
     end
     waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800"+ ch +"hf/mywavewam800_" + place + ".an." + string(numberDate) + "18.nc";
     
-    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'mHs');
+    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'hs');
     waveDir(:,:,24*i+19:24*i+42) = ncread(waveData,'thq');  % I believe thq is total wave dir 
     windDir(:,:,24*i+19:24*i+42) = ncread(waveData,'dd');
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
@@ -90,7 +90,7 @@ for i = 0:numDays
         waveHZ = zeros(waveDimentions); 
         windSpeed = zeros(waveDimentions); 
         
-        waveSize(:,:,1:18) = ncread(waveData,'mHs', [1 1 7], [inf inf inf]);
+        waveSize(:,:,1:18) = ncread(waveData,'hs', [1 1 7], [inf inf inf]);
         waveDir(:,:,1:18) = ncread(waveData,'thq', [1 1 7], [inf inf inf]); % I believe thq is total wave dir
         windDir(:,:,1:18) = ncread(waveData,'dd', [1 1 7], [inf inf inf]);
         waveHZ(:,:,1:18) = ncread(waveData,'tp', [1 1 7], [inf inf inf]);
@@ -99,7 +99,7 @@ for i = 0:numDays
     end
     waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800"+ ch +"hf/mywavewam800_" + place + ".an." + string(numberDate) + "18.nc";
     
-    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'mHs');
+    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'hs');
     waveDir(:,:,24*i+19:24*i+42) = ncread(waveData,'thq');  % I believe thq is total wave dir 
     windDir(:,:,24*i+19:24*i+42) = ncread(waveData,'dd');
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
@@ -146,7 +146,7 @@ for i = 0:numDays
         waveHZ = zeros(waveDimentions); 
         windSpeed = zeros(waveDimentions); 
         
-        waveSize(:,:,1:18) = ncread(waveData,'mHs', [1 1 7], [inf inf inf]);
+        waveSize(:,:,1:18) = ncread(waveData,'hs', [1 1 7], [inf inf inf]);
         waveDir(:,:,1:18) = ncread(waveData,'thq', [1 1 7], [inf inf inf]); % I believe thq is total wave dir
         windDir(:,:,1:18) = ncread(waveData,'dd', [1 1 7], [inf inf inf]);
         waveHZ(:,:,1:18) = ncread(waveData,'tp', [1 1 7], [inf inf inf]);
@@ -155,7 +155,7 @@ for i = 0:numDays
     end
     waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800"+ ch +"hf/mywavewam800_" + place + ".an." + string(numberDate) + "18.nc";
     
-    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'mHs');
+    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'hs');
     waveDir(:,:,24*i+19:24*i+42) = ncread(waveData,'thq');  % I believe thq is total wave dir 
     windDir(:,:,24*i+19:24*i+42) = ncread(waveData,'dd');
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
@@ -202,7 +202,7 @@ for i = 0:numDays
         waveHZ = zeros(waveDimentions); 
         windSpeed = zeros(waveDimentions); 
         
-        waveSize(:,:,1:18) = ncread(waveData,'mHs', [1 1 7], [inf inf inf]);
+        waveSize(:,:,1:18) = ncread(waveData,'hs', [1 1 7], [inf inf inf]);
         waveDir(:,:,1:18) = ncread(waveData,'thq', [1 1 7], [inf inf inf]); % I believe thq is total wave dir
         windDir(:,:,1:18) = ncread(waveData,'dd', [1 1 7], [inf inf inf]);
         waveHZ(:,:,1:18) = ncread(waveData,'tp', [1 1 7], [inf inf inf]);
@@ -211,7 +211,7 @@ for i = 0:numDays
     end
     waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800"+ ch +"hf/mywavewam800_" + place + ".an." + string(numberDate) + "18.nc";
     
-    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'mHs');
+    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'hs');
     waveDir(:,:,24*i+19:24*i+42) = ncread(waveData,'thq');  % I believe thq is total wave dir 
     windDir(:,:,24*i+19:24*i+42) = ncread(waveData,'dd');
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
@@ -258,7 +258,7 @@ for i = 0:numDays
         waveHZ = zeros(waveDimentions); 
         windSpeed = zeros(waveDimentions); 
         
-        waveSize(:,:,1:18) = ncread(waveData,'mHs', [1 1 7], [inf inf inf]);
+        waveSize(:,:,1:18) = ncread(waveData,'hs', [1 1 7], [inf inf inf]);
         waveDir(:,:,1:18) = ncread(waveData,'thq', [1 1 7], [inf inf inf]); % I believe thq is total wave dir
         windDir(:,:,1:18) = ncread(waveData,'dd', [1 1 7], [inf inf inf]);
         waveHZ(:,:,1:18) = ncread(waveData,'tp', [1 1 7], [inf inf inf]);
@@ -267,7 +267,7 @@ for i = 0:numDays
     end
     waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800"+ ch +"hf/mywavewam800_" + place + ".an." + string(numberDate) + "18.nc";
     
-    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'mHs');
+    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'hs');
     waveDir(:,:,24*i+19:24*i+42) = ncread(waveData,'thq');  % I believe thq is total wave dir 
     windDir(:,:,24*i+19:24*i+42) = ncread(waveData,'dd');
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
@@ -314,7 +314,7 @@ for i = 0:numDays
         waveHZ = zeros(waveDimentions); 
         windSpeed = zeros(waveDimentions); 
         
-        waveSize(:,:,1:18) = ncread(waveData,'mHs', [1 1 7], [inf inf inf]);
+        waveSize(:,:,1:18) = ncread(waveData,'hs', [1 1 7], [inf inf inf]);
         waveDir(:,:,1:18) = ncread(waveData,'thq', [1 1 7], [inf inf inf]); % I believe thq is total wave dir
         windDir(:,:,1:18) = ncread(waveData,'dd', [1 1 7], [inf inf inf]);
         waveHZ(:,:,1:18) = ncread(waveData,'tp', [1 1 7], [inf inf inf]);
@@ -323,7 +323,7 @@ for i = 0:numDays
     end
     waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800"+ ch +"hf/mywavewam800_" + place + ".an." + string(numberDate) + "18.nc";
     
-    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'mHs');
+    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'hs');
     waveDir(:,:,24*i+19:24*i+42) = ncread(waveData,'thq');  % I believe thq is total wave dir 
     windDir(:,:,24*i+19:24*i+42) = ncread(waveData,'dd');
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');
@@ -370,7 +370,7 @@ for i = 0:numDays
         waveHZ = zeros(waveDimentions); 
         windSpeed = zeros(waveDimentions); 
         
-        waveSize(:,:,1:18) = ncread(waveData,'mHs', [1 1 7], [inf inf inf]);
+        waveSize(:,:,1:18) = ncread(waveData,'hs', [1 1 7], [inf inf inf]);
         waveDir(:,:,1:18) = ncread(waveData,'thq', [1 1 7], [inf inf inf]); % I believe thq is total wave dir
         windDir(:,:,1:18) = ncread(waveData,'dd', [1 1 7], [inf inf inf]);
         waveHZ(:,:,1:18) = ncread(waveData,'tp', [1 1 7], [inf inf inf]);
@@ -379,7 +379,7 @@ for i = 0:numDays
     end
     waveData = "https://thredds.met.no/thredds/dodsC/fou-hi/mywavewam800"+ ch +"hf/mywavewam800_" + place + ".an." + string(numberDate) + "18.nc";
     
-    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'mHs');
+    waveSize(:,:,24*i+7:24*i+30) = ncread(waveData,'hs');
     waveDir(:,:,24*i+19:24*i+42) = ncread(waveData,'thq');  % I believe thq is total wave dir 
     windDir(:,:,24*i+19:24*i+42) = ncread(waveData,'dd');
     waveHZ(:,:,24*i+19:24*i+42) = ncread(waveData,'tp');

@@ -19,7 +19,6 @@ ForcastWindSpeed_data = [];
 CurrentDir_data = [];
 CurrentSpeed_data = [];
 Vr_data = [];
-Vr_data = [];
 
 avrager = 2*60; % average over x min
 for i = 1: 4
