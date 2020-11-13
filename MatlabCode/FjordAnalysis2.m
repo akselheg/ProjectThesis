@@ -260,11 +260,11 @@ disp('Plotting Data')
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveSize_data)
     if ForecastWaveSize_data(i) < 0.12
-        table1 = cat(1,table1,[relWaveDir_data(i) Vr_data(i)]);
+        table1 = cat(1,table1,[relWaveDir_data(i) sog_data(i)]);
     elseif ForecastWaveSize_data(i) < 0.2
-        table2 = cat(1,table2,[relWaveDir_data(i) Vr_data(i)]);
+        table2 = cat(1,table2,[relWaveDir_data(i) sog_data(i)]);
     else
-        table3 = cat(1,table3,[relWaveDir_data(i) Vr_data(i)]);
+        table3 = cat(1,table3,[relWaveDir_data(i) sog_data(i)]);
     end
 end
 figure;
@@ -273,18 +273,18 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 legend('Wave Size < 0.12', '0.12 < Wave Size < 0.2', 'Wave Size > 0.2')
-xlabel 'Relative wave direction',ylabel 'SOG';
+xlabel 'Relative wave direction [deg]',ylabel 'SOG [m/s]';
 hold off
 
 %% 
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveFreq_data)
     if ForecastWaveFreq_data(i) < 0.55
-        table1 = cat(1,table1,[relWaveDir_data(i) Vr_data(i)]);
+        table1 = cat(1,table1,[relWaveDir_data(i) sog_data(i)]);
     elseif ForecastWaveFreq_data(i) < 0.65
-        table2 = cat(1,table2,[relWaveDir_data(i) Vr_data(i)]);
+        table2 = cat(1,table2,[relWaveDir_data(i) sog_data(i)]);
     else
-        table3 = cat(1,table3,[relWaveDir_data(i) Vr_data(i)]);
+        table3 = cat(1,table3,[relWaveDir_data(i) sog_data(i)]);
     end
 end
 figure;
@@ -293,17 +293,17 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 legend('Hz < 0.55', '0.55 < Hz < 0.65', 'Hz > 0.65')
-xlabel 'Relative wave direction',ylabel 'SOG';
+xlabel 'Relative wave direction [deg]',ylabel 'SOG [m/s]';
 hold off
 %%
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveSize_data)
     if ForecastWaveSize_data(i) < 0.12
-        table1 = cat(1,table1,[ForecastWaveFreq_data(i) Vr_data(i)]);
+        table1 = cat(1,table1,[ForecastWaveFreq_data(i) sog_data(i)]);
     elseif ForecastWaveSize_data(i) < 0.2
-        table2 = cat(1,table2,[ForecastWaveFreq_data(i) Vr_data(i)]);
+        table2 = cat(1,table2,[ForecastWaveFreq_data(i) sog_data(i)]);
     else
-        table3 = cat(1,table3,[ForecastWaveFreq_data(i) Vr_data(i)]);
+        table3 = cat(1,table3,[ForecastWaveFreq_data(i) sog_data(i)]);
     end
 end
 figure;
@@ -312,8 +312,8 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 legend('Wave Size < 1.2', '1.2 < Wave Size < 1.6', 'Wave Size > 1.6')
-xlabel 'Wave Frequency [Hz]',ylabel '|V_r| [m/s]';
-p = polyfit(ForecastWaveFreq_data,Vr_data,1);
+xlabel 'Wave Frequency [Hz]',ylabel 'SOG [m/s]';
+p = polyfit(ForecastWaveFreq_data,sog_data,1);
 x1 = linspace(min(ForecastWaveFreq_data),max(ForecastWaveFreq_data), length(ForecastWaveFreq_data));
 y1 = polyval(p,x1);
 plot(x1,y1)
@@ -323,11 +323,11 @@ hold off
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveSize_data)
     if ForecastWaveFreq_data(i) < 0.55
-        table1 = cat(1,table1,[ForecastWaveSize_data(i) Vr_data(i)]);
+        table1 = cat(1,table1,[ForecastWaveSize_data(i) sog_data(i)]);
     elseif ForecastWaveFreq_data(i) < 0.65
-        table2 = cat(1,table2,[ForecastWaveSize_data(i) Vr_data(i)]);
+        table2 = cat(1,table2,[ForecastWaveSize_data(i) sog_data(i)]);
     else
-        table3 = cat(1,table3,[ForecastWaveSize_data(i) Vr_data(i)]);
+        table3 = cat(1,table3,[ForecastWaveSize_data(i) sog_data(i)]);
     end
 end
 figure;
@@ -336,8 +336,8 @@ hold on
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
 
-xlabel 'Wave Size [m]',ylabel '|V_r| [m/s]';
-p = polyfit(ForecastWaveSize_data,Vr_data,1);
+xlabel 'Wave Size [m]',ylabel 'SOG [m/s]';
+p = polyfit(ForecastWaveSize_data,sog_data,1);
 x1 = linspace(min(ForecastWaveSize_data),max(ForecastWaveSize_data), length(ForecastWaveSize_data));
 y1 = polyval(p,x1);
 plot(x1,y1)
@@ -348,11 +348,11 @@ hold off
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(messuredRelWindSpeed_data)
     if messuredRelWindSpeed_data(i) < 20
-        table1 = cat(1,table1,[messuredRelWindDir_data(i) Vr_data(i)]);
+        table1 = cat(1,table1,[messuredRelWindDir_data(i) sog_data(i)]);
     elseif messuredRelWindSpeed_data(i) < 6
-        table2 = cat(1,table2,[messuredRelWindDir_data(i) Vr_data(i)]);
+        table2 = cat(1,table2,[messuredRelWindDir_data(i) sog_data(i)]);
     else
-        table3 = cat(1,table3,[messuredRelWindDir_data(i) Vr_data(i)]);
+        table3 = cat(1,table3,[messuredRelWindDir_data(i) sog_data(i)]);
     end
 end
 figure;
@@ -361,25 +361,25 @@ hold on
 %scatter(table2(:,1), table2(:,2))
 %scatter(table3(:,1), table3(:,2))
 %legend('Wind Speed < 3', '3 < Wind Speed < 6', 'Wind Speed > 6')
-xlabel 'Measured Relative wind direction',ylabel 'SOG';
+xlabel 'Measured Relative wind direction',ylabel 'SOG [m/s]';
 hold off
 %%
 figure;
-scatter(CurrentSpeed_data, Vr_data)
+scatter(CurrentSpeed_data, sog_data)
 hold on 
-p = polyfit(CurrentSpeed_data, Vr_data, 1);
+p = polyfit(CurrentSpeed_data, sog_data, 1);
 x1 = linspace(min(CurrentSpeed_data), max(CurrentSpeed_data), length(CurrentSpeed_data));
 y1 = polyval(p,x1);
 plot(x1,y1)
 %legend('Curent speed < 0.15', '0.15< Curent speed <0.3', 'Curent speed > 0.3')
-xlabel 'Current Speed in Surge Direction',ylabel '|V_r|';
+xlabel 'Current Speed in Surge Direction [m/s]',ylabel 'SOG [m/s]';
 hold off
 pause(0.01)
 %%
 figure;
-scatter(ForcastWindSpeed_data, Vr_data)
+scatter(ForcastWindSpeed_data, sog_data)
 hold on 
-p = polyfit(ForcastWindSpeed_data, Vr_data, 1);
+p = polyfit(ForcastWindSpeed_data, sog_data, 1);
 x1 = linspace(min(ForcastWindSpeed_data), max(ForcastWindSpeed_data), length(ForcastWindSpeed_data));
 y1 = polyval(p,x1);
 plot(x1,y1)

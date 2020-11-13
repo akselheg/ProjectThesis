@@ -8,28 +8,16 @@ clc; clearvars; close all;
 % Data to be saved for plots
 lon_data = [];
 lat_data = [];
-cog_data = [];
 sog_data = [];
-psi_data = [];
 ForecastWaveSize_data = [];
 messuredRelWindDir_data = [];
 messuredRelWindSpeed_data = [];
 relWaveDir_data = [];
-relWindDir_data = [];
 ForecastWaveFreq_data = [];
 ForcastWindSpeed_data = [];
 CurrentDir_data = [];
 CurrentSpeed_data = [];
-speed_data = [];
 Vr_data = [];
-VrDir_data = [];
-
-CurrentDirVrDir_data = [];
-relWaveDirVrDir_data = [];
-relWindDirVrDir_data = [];
-CurrentDircog_data = [];
-relWaveDircog_data = [];
-relWindDircog_data = [];
 VcDir_data = [];
 test_sog_data = [];
 test_ForecastWaveSize_data = [];
@@ -37,13 +25,12 @@ test_ForecastWaveFreq_data = [];
 test_relWaveDir_data = [];
 test_ForcastWindSpeed_data = [];
 test_CurrentSpeed_data = [];
-test_VrDir_data = [];
+test_Vr_data = [];
 
 xmax = 0; ymax = 0; ymin = inf; xmin = inf;
 avrager = 3*60; % average over x min
 count = 1;
-    disp('Loading new data')
-%% load data
+disp('Loading new data')
 path = './Nordfjord082813/';
 addpath(path);
 gpsFix = load('GpsFix.mat');
@@ -53,6 +40,7 @@ rmpath(path)
 load('weatherData_2020-5-28_2020-5-28.mat')
 load('currentweatherData_2020-5-28_2020-5-29.mat')
 disp('Done loading data')
+
 
 %% Format and interpolations
 gps_data = gpsFix.GpsFix;
@@ -139,7 +127,7 @@ for m = (10*120) : length(gps_data.sog) - (10*120)
             else
                 ForecastWaveSize_data = cat(1, ForecastWaveSize_data, waveSize(x, y, curr_hour + 1));
             end
-            VrDir_data = cat(1, VrDir_data,VrSpeed);
+            Vr_data = cat(1, Vr_data,VrSpeed);
             sog_data = cat(1, sog_data,sog);
             relWaveDir_data = cat(1, relWaveDir_data, ssa(psi- curWaveDir - 180, 'deg'));
 
@@ -156,7 +144,7 @@ for m = (10*120) : length(gps_data.sog) - (10*120)
             else
                test_ForecastWaveSize_data = cat(1,test_ForecastWaveSize_data, waveSize(x, y, curr_hour + 1));
             end
-            test_VrDir_data = cat(1, test_VrDir_data,VrSpeed);
+            test_Vr_data = cat(1, test_Vr_data,VrSpeed);
             test_sog_data = cat(1, test_sog_data,sog);
             test_ForecastWaveFreq_data = cat(1,test_ForecastWaveFreq_data, 1/waveHZ(x,y,curr_hour+1));
             test_relWaveDir_data = cat(1,test_relWaveDir_data, ssa(ssa(psi- curWaveDir, 'deg') , 'deg'));
@@ -193,7 +181,7 @@ while i < length(ForecastWaveSize_data)
         ForcastWindSpeed_data = ForcastWindSpeed_data([1:i-1 i+1:end]);
         CurrentSpeed_data = CurrentSpeed_data([1:i-1 i+1:end]);
         sog_data = sog_data([1:i-1 i+1:end]);
-        VrDir_data = VrDir_data([1:i-1 i+1:end]);
+        Vr_data = Vr_data([1:i-1 i+1:end]);
     else
         i = i + 1;
     end
@@ -210,7 +198,7 @@ while i < length(test_ForecastWaveSize_data)
         test_ForcastWindSpeed_data = test_ForcastWindSpeed_data([1:i-1 i+1:end]);
         test_CurrentSpeed_data = test_CurrentSpeed_data([1:i-1 i+1:end]);
         test_sog_data = test_sog_data([1:i-1 i+1:end]);
-        test_VrDir_data = test_VrDir_data([1:i-1 i+1:end]);
+        test_Vr_data = test_Vr_data([1:i-1 i+1:end]);
     else
         i = i + 1;
     end
@@ -218,12 +206,14 @@ end
 X = [ForecastWaveSize_data ForecastWaveFreq_data abs(relWaveDir_data) ...
     ForcastWindSpeed_data CurrentSpeed_data];
 Y1 = sog_data;
+Y1_test = test_sog_data;
 w1 = (X'*X)\(X'*Y1);
 X_test = [test_ForecastWaveSize_data test_ForecastWaveFreq_data abs(test_relWaveDir_data) ...
     test_ForcastWindSpeed_data test_CurrentSpeed_data];
 CorrData1 = [Y1 X];
 corrCoefs1 = corrcoef(CorrData1);
-Y2 = VrDir_data;
+Y2 = Vr_data;
+Y2_test = test_Vr_data;
 w2 = (X'*X)\(X'*Y2);
 CorrData2 = [Y2 X];
 corrCoefs2 = corrcoef(CorrData2);
@@ -237,69 +227,48 @@ figure;
 scatter(linspace(1,1,length(diff1)),diff1)
 hold on
 boxplot(diff1)
+title 'Error between guessed SOG and actual SOG'
+hold off
 %%
 diff2 = [];
-for i = 1:length(test_VrDir_data)
+for i = 1:length(test_Vr_data)
     out = w2'*X_test(i, :)';
-    diff2 = cat(1,diff2,out - test_VrDir_data(i));
+    diff2 = cat(1,diff2,out - test_Vr_data(i));
 end
 figure;
 scatter(linspace(1,1,length(diff2)),diff2)
 hold on
 boxplot(diff2)
-%plot(, mean(diff2).*ones(132))
-%boxplot(diff2)
+title 'Error between guessed |Vr| and actual |Vr|'
+hold off
 %%
 figure
 yvalues = {'Sog','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
-    'WindSwaySpeed', 'CurrentSwaySpeed'};
+    'WindSurgeSpeed', 'CurrentSurgeSpeed'};
 xvalues = {'Sog','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
-    'WindSwaySpeed', 'CurrentSwaySpeed'};
+    'WindSurgeSpeed', 'CurrentSurgeSpeed'};
 h = heatmap(xvalues,yvalues,corrCoefs1);
 h.Title = 'Covariance Matrix';
 
 %%
 figure
 yvalues = {'|Vr|','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
-    'WindSwaySpeed', 'CurrentSwaySpeed'};
+    'WindSurgeSpeed', 'CurrentSurgeSpeed'};
 xvalues = {'|Vr|','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
-    'WindSwaySpeed', 'CurrentSwaySpeed'};
+    'WindSurgeSpeed', 'CurrentSurgeSpeed'};
 h = heatmap(xvalues,yvalues,corrCoefs2);
 h.Title = 'Covariance Matrix';
 %%
-disp('Plotting Data')
-table1 = [];table2 = [];table3 = [];
-for i = 1: length(ForecastWaveSize_data)
-    if ForecastWaveSize_data(i) < 1
-        table1 = cat(1,table1,[relWaveDir_data(i) sog_data(i)]);
-    elseif ForecastWaveSize_data(i) < 1.6
-        table2 = cat(1,table2,[relWaveDir_data(i) sog_data(i)]);
-    else
-        table3 = cat(1,table3,[relWaveDir_data(i) sog_data(i)]);
-    end
-end
-figure;
-scatter(table1(:,1), table1(:,2))
-hold on 
-scatter(table2(:,1), table2(:,2))
-scatter(table3(:,1), table3(:,2))
-legend('Wave Size < 2', '2 < Wave Size < 3', 'Wave Size > 3')
-xlabel 'Relative wave direction',ylabel '|Vr|';
-hold off
 
 %% 
-% figure;
-% scatter3((relWaveDir_data),ForecastWaveFreq_data,Vr_data)
-% xlabel 'Relative wave direction',ylabel 'Wave period',zlabel 'SOG';
-
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveFreq_data)
-    if ForecastWaveFreq_data(i) < 0.13
-        table1 = cat(1,table1,[relWaveDir_data(i) sog_data(i)]);
-    elseif ForecastWaveFreq_data(i) < 0.16
-        table2 = cat(1,table2,[relWaveDir_data(i) sog_data(i)]);
+    if ForecastWaveFreq_data(i) < 0.7
+        table1 = cat(1,table1,[relWaveDir_data(i) Vr_data(i)]);
+    elseif ForecastWaveFreq_data(i) < 0.75
+        table2 = cat(1,table2,[relWaveDir_data(i) Vr_data(i)]);
     else
-        table3 = cat(1,table3,[relWaveDir_data(i) sog_data(i)]);
+        table3 = cat(1,table3,[relWaveDir_data(i) Vr_data(i)]);
     end
 end
 figure;
@@ -307,118 +276,63 @@ scatter(table1(:,1), table1(:,2))
 hold on 
 scatter(table2(:,1), table2(:,2))
 scatter(table3(:,1), table3(:,2))
-legend('Hz < 0.13', '0.13 < Hz < 0.16', 'Hz > 1.16')
-xlabel 'Relative wave direction',ylabel 'sog';
+legend('Hz < 0.7', '0.7 < Hz < 0.75', 'Hz > 0.75')
+xlabel 'Relative wave direction',ylabel 'SOG';
 hold off
 %%
-% figure;
-% scatter3(relWaveDir_data,relWindDir_data, sog_data)
-%xlabel 'Relative wave direction',ylabel 'Relative Wind Angle',zlabel 'SOG';
-table1 = [];table2 = [];table3 = [];
-for i = 1: length(ForecastWaveSize_data)
-    if ForecastWaveSize_data(i) < 1.2
-        table1 = cat(1,table1,[ForecastWaveFreq_data(i) sog_data(i)]);
-    elseif ForecastWaveSize_data(i) < 1.6
-        table2 = cat(1,table2,[ForecastWaveFreq_data(i) sog_data(i)]);
-    else
-        table3 = cat(1,table3,[ForecastWaveFreq_data(i) sog_data(i)]);
-    end
-end
 figure;
-scatter(table1(:,1), table1(:,2))
-hold on 
-scatter(table2(:,1), table2(:,2))
-scatter(table3(:,1), table3(:,2))
-legend('Wave Size < 1.2', '1.2 < Wave Size < 1.6', 'Wave Size > 1.6')
-xlabel 'Wave period',ylabel 'sog';
-p = polyfit(ForecastWaveFreq_data,sog_data,1);
-x1 = linspace(min(ForecastWaveFreq_data),max(ForecastWaveFreq_data), length(ForecastWaveFreq_data));
-y1 = polyval(p,x1);
-plot(x1,y1)
-hold off
-%%
-table1 = [];table2 = [];table3 = [];
-for i = 1: length(ForecastWaveSize_data)
-    if ForecastWaveFreq_data(i) < 0.13
-        table1 = cat(1,table1,[ForecastWaveSize_data(i) sog_data(i)]);
-    elseif ForecastWaveFreq_data(i) < 0.16
-        table2 = cat(1,table2,[ForecastWaveSize_data(i) sog_data(i)]);
-    else
-        table3 = cat(1,table3,[ForecastWaveSize_data(i) sog_data(i)]);
-    end
-end
-figure;
-scatter(table1(:,1), table1(:,2))
-hold on 
-scatter(table2(:,1), table2(:,2))
-scatter(table3(:,1), table3(:,2))
-legend('Wave Hz < 0.13', '0.13 < Wave Hz < 0.16', 'Wave Hz > 0.16')
-xlabel 'Wave Size',ylabel 'sog';
-p = polyfit(ForecastWaveSize_data,sog_data,1);
+scatter(ForecastWaveSize_data, Vr_data)
+hold on
+xlabel 'Wave Size [m]',ylabel '|V_r| [m/s]';
+p = polyfit(ForecastWaveSize_data,Vr_data,1);
 x1 = linspace(min(ForecastWaveSize_data),max(ForecastWaveSize_data), length(ForecastWaveSize_data));
 y1 = polyval(p,x1);
 plot(x1,y1)
+legend('Wave Hz < 0.7', '0.7 < Wave Hz < 0.75', 'Wave Hz > 0.75', 'Linear Regression')
 hold off
 %%
-% figure
-% scatter3(ForcastWindSpeed_data,(relWindDir_data), sog_data)
-% % xlabel 'Wind Speed',ylabel 'Relative Wind Angle',zlabel 'SOG';
 % table1 = [];table2 = [];table3 = [];
-% for i = 1: length(ForcastWindSpeed_data)
-%     if ForcastWindSpeed_data(i) < 3
-%         table1 = cat(1,table1,[relWindDir_data(i) sog_data(i)]);
-%     elseif ForcastWindSpeed_data(i) < 6
-%         table2 = cat(1,table2,[relWindDir_data(i) sog_data(i)]);
+% for i = 1: length(messuredRelWindSpeed_data)
+%     if messuredRelWindSpeed_data(i) < 20
+%         table1 = cat(1,table1,[messuredRelWindDir_data(i) Vr_data(i)]);
+%     elseif messuredRelWindSpeed_data(i) < 6
+%         table2 = cat(1,table2,[messuredRelWindDir_data(i) Vr_data(i)]);
 %     else
-%         table3 = cat(1,table3,[relWindDir_data(i) sog_data(i)]);
+%         table3 = cat(1,table3,[messuredRelWindDir_data(i) Vr_data(i)]);
 %     end
 % end
 % figure;
 % scatter(table1(:,1), table1(:,2))
 % hold on 
-% scatter(table2(:,1), table2(:,2))
-% scatter(table3(:,1), table3(:,2))
-% legend('Wind Speed < 3', '3 < Wind Speed < 6', 'Wind Speed > 6')
-% xlabel 'Relative wind direction',ylabel 'sog';
+% %scatter(table2(:,1), table2(:,2))
+% %scatter(table3(:,1), table3(:,2))
+% %legend('Wind Speed < 3', '3 < Wind Speed < 6', 'Wind Speed > 6')
+% xlabel 'Measured Relative wind direction',ylabel 'SOG';
 % hold off
 %%
-% figure
-% scatter3(messuredRelWindSpeed_data,(messuredRelWindDir_data), sog_data)
-% xlabel 'Wind Speed',ylabel 'Relative Wind Angle',zlabel 'SOG'
-table1 = [];table2 = [];table3 = [];
-for i = 1: length(messuredRelWindSpeed_data)
-    if messuredRelWindSpeed_data(i) < 3
-        table1 = cat(1,table1,[messuredRelWindDir_data(i) sog_data(i)]);
-    elseif messuredRelWindSpeed_data(i) < 6
-        table2 = cat(1,table2,[messuredRelWindDir_data(i) sog_data(i)]);
-    else
-        table3 = cat(1,table3,[messuredRelWindDir_data(i) sog_data(i)]);
-    end
-end
 figure;
-scatter(table1(:,1), table1(:,2))
+scatter(CurrentSpeed_data, Vr_data)
 hold on 
-scatter(table2(:,1), table2(:,2))
-scatter(table3(:,1), table3(:,2))
-legend('Wind Speed < 3', '3 < Wind Speed < 6', 'Wind Speed > 6')
-xlabel 'Measured Relative wind direction',ylabel 'sog';
-hold off
-%%
-% figure
-% scatter3((CurrentDir_data),CurrentSpeed_data, sog_data)
-% xlabel 'CurDir',ylabel 'CurSpeed',zlabel 'SOG';
-
-figure;
-scatter(CurrentSpeed_data, sog_data)
-hold on 
-p = polyfit(CurrentSpeed_data,sog_data,1);
+p = polyfit(CurrentSpeed_data, Vr_data, 1);
 x1 = linspace(min(CurrentSpeed_data), max(CurrentSpeed_data), length(CurrentSpeed_data));
 y1 = polyval(p,x1);
 plot(x1,y1)
-legend('Curent speed < 0.15', '0.15< Curent speed <0.3', 'Curent speed > 0.3')
-xlabel 'Current Speed in Sway Direction',ylabel 'sog';
+%legend('Curent speed < 0.15', '0.15< Curent speed <0.3', 'Curent speed > 0.3')
+xlabel 'Current Speed in Surge Direction',ylabel '|V_r|';
 hold off
-
+pause(0.01)
+%%
+figure;
+n = find(min(ForcastWindSpeed_data) ==  ForcastWindSpeed_data);
+tempdata = ForcastWindSpeed_data([1:n-1 n+1:end]);
+tempdata2 = Vr_data([1:n-1 n+1:end]);
+scatter(ForcastWindSpeed_data, Vr_data)
+hold on 
+p = polyfit(tempdata, tempdata2, 1);
+x1 = linspace(min(ForcastWindSpeed_data), max(ForcastWindSpeed_data), length(ForcastWindSpeed_data));
+y1 = polyval(p,x1);
+plot(x1,y1)
+xlabel 'Wind Speed in Surge Direction [m/s]',ylabel 'SOG [m/s]';
+hold off
 %%
 disp('Script done')
-
