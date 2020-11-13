@@ -14,7 +14,7 @@ function [net, performance, e, tr] = neuralNet(x,t,nh)
 % 'trainbr' takes longer but may be better for challenging problems.
 % 'trainscg' uses less memory. Suitable in low memory situations.
 
-trainFcn = 'trainbr';
+trainFcn = 'trainlm';
 
 % Create a Fitting Network
 hiddenLayerSize = nh;
