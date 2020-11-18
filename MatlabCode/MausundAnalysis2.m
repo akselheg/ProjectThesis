@@ -117,8 +117,6 @@ for i = 2:7
     EulerAngles.psi = ssa(EulerAngles.psi,'deg');
     messuredRelWindDir = interp1(windData.timestamp, ssa(windData.angle,'deg' ),gps_data.timestamp);
     messuredRelWindSpeed = interp1(windData.timestamp, windData.speed,gps_data.timestamp);
-    [latSize,longSize] = size(latitudeMapWave);
-    [curlatSize,curlongSize] = size(latitudeCurrentMap);
     first = true;
     disp('Done formating')
     disp('Start running through data')
@@ -239,19 +237,19 @@ for i = 2:7
     pause(0.01)
 end
 %%
-X = [ForecastWaveSize_data ForecastWaveFreq_data abs(relWaveDir_data) ...
-    ForcastWindSpeed_data CurrentSpeed_data];
+X = [ForecastWaveSize_data ForecastWaveFreq_data cos(rad2deg(relWaveDir_data)) ...
+    ForcastWindSpeed_data CurrentSpeed_data ones(length(sog_data),1)];
 Y1 = sog_data;
 Y1_test = test_sog_data;
 w1 = (X'*X)\(X'*Y1);
-X_test = [test_ForecastWaveSize_data test_ForecastWaveFreq_data abs(test_relWaveDir_data) ...
-    test_ForcastWindSpeed_data test_CurrentSpeed_data];
-CorrData1 = [Y1 X];
+X_test = [test_ForecastWaveSize_data test_ForecastWaveFreq_data cos(rad2deg(test_relWaveDir_data)) ...
+    test_ForcastWindSpeed_data test_CurrentSpeed_data ones(length(test_sog_data),1)]; 
+CorrData1 = [Y1 X(:, 1:end-1)];
 corrCoefs1 = corrcoef(CorrData1);
 Y2 = Vr_data;
 Y2_test = test_Vr_data;
 w2 = (X'*X)\(X'*Y2);
-CorrData2 = [Y2 X];
+CorrData2 = [Y2 X(:, 1:end-1)];
 corrCoefs2 = corrcoef(CorrData2);
 %%
 diff1 = [];
@@ -277,8 +275,6 @@ hold on
 boxplot(diff2)
 title 'Error between guessed |Vr| and actual |Vr|'
 hold off
-%plot(, mean(diff2).*ones(132))
-%boxplot(diff2)
 %%
 figure
 yvalues = {'Sog','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
@@ -286,7 +282,7 @@ yvalues = {'Sog','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
 xvalues = {'Sog','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
     'WindSurgeSpeed', 'CurrentSurgeSpeed'};
 h = heatmap(xvalues,yvalues,corrCoefs1);
-h.Title = 'Covariance Matrix';
+h.Title = 'Correlation Matrix';
 
 %%
 figure
@@ -295,7 +291,7 @@ yvalues = {'|Vr|','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
 xvalues = {'|Vr|','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
     'WindSurgeSpeed', 'CurrentSurgeSpeed'};
 h = heatmap(xvalues,yvalues,corrCoefs2);
-h.Title = 'Covariance Matrix';
+h.Title = 'Correlation Matrix';
 %%
 disp('Plotting Data')
 table1 = [];table2 = [];table3 = [];
@@ -318,9 +314,6 @@ xlabel 'Relative wave direction',ylabel 'SOG';
 hold off
 
 %% 
-% figure;
-% scatter3((relWaveDir_data),ForecastWaveFreq_data,Vr_data)
-% xlabel 'Relative wave direction',ylabel 'Wave period',zlabel 'SOG';
 
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveFreq_data)
@@ -341,9 +334,6 @@ legend('Hz < 0.13', '0.13 < Hz < 0.16', 'Hz > 1.16')
 xlabel 'Relative wave direction',ylabel 'SOG';
 hold off
 %%
-% figure;
-% scatter3(relWaveDir_data,relWindDir_data, sog_data)
-%xlabel 'Relative wave direction',ylabel 'Relative Wind Angle',zlabel 'SOG';
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(ForecastWaveSize_data)
     if ForecastWaveSize_data(i) < 1.2
@@ -392,31 +382,6 @@ plot(x1,y1)
 legend('Wave Hz < 0.13', '0.13 < Wave Hz < 0.16', 'Wave Hz > 0.16', 'Linear Regression')
 hold off
 %%
-% figure
-% scatter3(ForcastWindSpeed_data,(relWindDir_data), sog_data)
-% % xlabel 'Wind Speed',ylabel 'Relative Wind Angle',zlabel 'SOG';
-% table1 = [];table2 = [];table3 = [];
-% for i = 1: length(ForcastWindSpeed_data)
-%     if ForcastWindSpeed_data(i) < 3
-%         table1 = cat(1,table1,[relWindDir_data(i) sog_data(i)]);
-%     elseif ForcastWindSpeed_data(i) < 6
-%         table2 = cat(1,table2,[relWindDir_data(i) sog_data(i)]);
-%     else
-%         table3 = cat(1,table3,[relWindDir_data(i) sog_data(i)]);
-%     end
-% end
-% figure;
-% scatter(table1(:,1), table1(:,2))
-% hold on 
-% scatter(table2(:,1), table2(:,2))
-% scatter(table3(:,1), table3(:,2))
-% legend('Wind Speed < 3', '3 < Wind Speed < 6', 'Wind Speed > 6')
-% xlabel 'Relative wind direction',ylabel 'sog';
-% hold off
-%%
-% figure
-% scatter3(messuredRelWindSpeed_data,(messuredRelWindDir_data), sog_data)
-% xlabel 'Wind Speed',ylabel 'Relative Wind Angle',zlabel 'SOG'
 table1 = [];table2 = [];table3 = [];
 for i = 1: length(messuredRelWindSpeed_data)
     if messuredRelWindSpeed_data(i) < 3
@@ -436,10 +401,6 @@ legend('Wind Speed < 3', '3 < Wind Speed < 6', 'Wind Speed > 6')
 xlabel 'Measured Relative wind direction',ylabel 'SOG';
 hold off
 %%
-% figure
-% scatter3((CurrentDir_data),CurrentSpeed_data, sog_data)
-% xlabel 'CurDir',ylabel 'CurSpeed',zlabel 'SOG';
-
 figure;
 scatter(CurrentSpeed_data, Vr_data)
 hold on 
@@ -462,17 +423,12 @@ plot(x1,y1)
 xlabel 'Wind Speed in Surge Direction [m/s]',ylabel 'SOG [m/s]';
 hold off
 pause(0.01)
-%%
-%% Data That can be downladed from neptus that are relevant
-% AbsoluteWind,Depth,DesiredHeading,DesiredPath,DesiredSpeed,DesiredZ,GpsFix,RelativeWind,RemoteSensorInfo,EstimatedState,EulerAngles
-% GpsFix,RelativeWind,EulerAngles
+%% Redo for testing
 
 % Data to be saved for plots
 lon_data = [];
 lat_data = [];
-cog_data = [];
 sog_data = [];
-psi_data = [];
 ForecastWaveSize_data = [];
 messuredRelWindDir_data = [];
 messuredRelWindSpeed_data = [];
@@ -512,8 +468,6 @@ EulerAngles = EulerAngles.EulerAngles;
 EulerAngles.psi = ssa(EulerAngles.psi,'deg');
 messuredRelWindDir = interp1(windData.timestamp, ssa(windData.angle,'deg' ),gps_data.timestamp);
 messuredRelWindSpeed = interp1(windData.timestamp, windData.speed,gps_data.timestamp);
-[latSize,longSize] = size(latitudeMapWave);
-[curlatSize,curlongSize] = size(latitudeCurrentMap);
 first = true;
 disp('Done formating')
 disp('Start running through data')
@@ -611,8 +565,8 @@ for m = (10*120) : length(gps_data.sog) - (10*120)
 end
 disp('Run Success')
 %%
-X_testt = [ForecastWaveSize_data ForecastWaveFreq_data abs(relWaveDir_data) ...
-    ForcastWindSpeed_data CurrentSpeed_data];
+X_testt = [ForecastWaveSize_data ForecastWaveFreq_data cos(deg2rad(relWaveDir_data)) ...
+    ForcastWindSpeed_data CurrentSpeed_data, ones(length(sog_data),1)];
 diff1 = [];
 for i = 1:length(sog_data)
     out = w1'*X_testt(i, :)';

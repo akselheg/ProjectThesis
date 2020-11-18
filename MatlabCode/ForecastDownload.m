@@ -54,11 +54,11 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-pause(1);
+pause(10);
 disp('Done');
 %%
 clearvars;close all;
-
+pause(3);
 
 startDate = [2020, 07, 03];
 endDate = [2020, 07, 04];
@@ -110,11 +110,11 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-pause(1);
+pause(10);
 disp('Done2');
 %% 
 clearvars;close all;
-
+pause(3);
 
 startDate = [2020, 07, 05];
 endDate = [2020, 07, 05];
@@ -166,11 +166,11 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-pause(1);
+pause(10);
 disp('Done3');
 %%
 clearvars;close all;
-
+pause(3)
 
 startDate = [2020, 07, 06];
 endDate = [2020, 07, 06];
@@ -222,11 +222,11 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-pause(1);
+pause(10);
 disp('Done4');
 %%
 clearvars;close all;
-
+pause(3);
 
 startDate = [2020, 07, 09];
 endDate = [2020, 07, 09];
@@ -278,11 +278,11 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-pause(1);
+pause(10);
 disp('Done5');
 %%
 clearvars;close all;
-
+pause(3);
 
 startDate = [2020, 05, 28];
 endDate = [2020, 05, 28];
@@ -334,11 +334,11 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-pause(1);
+pause(10);
 disp('Done6');
 %%
 clearvars;close all;
-
+pause(3);
 
 startDate = [2020, 02, 20];
 endDate = [2020, 02, 20];
@@ -390,5 +390,5 @@ startDateSaveFormat = string(startDate(1)) + "-" + string(startDate(2)) + "-" + 
 endDateSaveFormat =  string(endDate(1)) + "-" + string(endDate(2)) + "-" + string(endDate(3));
 savename = "weatherData_"+ startDateSaveFormat + "_" + endDateSaveFormat + ".mat"; 
 save(savename, 'windSpeed','waveHZ','waveSize','waveDir', 'latitudeMapWave', 'longitudeMapWave','windDir', 'waveInfo','-v7.3');
-pause(1);
+pause(10);
 disp('DoneDone');
