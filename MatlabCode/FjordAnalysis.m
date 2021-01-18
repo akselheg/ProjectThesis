@@ -54,7 +54,7 @@ for i = 1:4
         disp('Done loading data')
     end
     if i == 3
-        path = './Trondheum094058/';
+        path = './Trondheum094058/';avrager
         addpath(path);
         gpsFix = load('GpsFix.mat');
         RelativeWind = load('RelativeWind.mat');
