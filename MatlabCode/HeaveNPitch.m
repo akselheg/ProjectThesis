@@ -17,7 +17,7 @@ for i = 1:7
         gpsFix = load('GpsFix.mat');
         RelativeWind = load('RelativeWind.mat');
         EulerAngles = load('EulerAngles.mat');
-        Heave = load('Heave.mat');
+        Heave = load('./Mausund200701_181204/Heave.mat');
         rmpath(path)
         disp('Done loading data')
     end
@@ -37,7 +37,7 @@ for i = 1:7
         gpsFix = load('GpsFix.mat');
         RelativeWind = load('RelativeWind.mat');
         EulerAngles = load('EulerAngles.mat');
-        Heave = load('Heave.mat');
+        Heave = load('./Mausund200703_080820/Heave.mat');
         rmpath(path)
         disp('Done loading data')
     end
@@ -47,7 +47,7 @@ for i = 1:7
         gpsFix = load('GpsFix.mat');
         RelativeWind = load('RelativeWind.mat');
         EulerAngles = load('EulerAngles.mat');
-        Heave = load('Heave.mat');
+        Heave = load('./Mausund200703_132548/Heave.mat');
         rmpath(path)
         disp('Done loading data')
     end
@@ -57,7 +57,7 @@ for i = 1:7
         gpsFix = load('GpsFix.mat');
         RelativeWind = load('RelativeWind.mat');
         EulerAngles = load('EulerAngles.mat');
-        Heave = load('Heave.mat');
+        Heave = load('./Mausund200705_120030/Heave.mat');
         rmpath(path)
         disp('Done loading data')
     end
@@ -67,7 +67,7 @@ for i = 1:7
         gpsFix = load('GpsFix.mat');
         RelativeWind = load('RelativeWind.mat');
         EulerAngles = load('EulerAngles.mat');
-        Heave = load('Heave.mat');
+        Heave = load('./Mausund200706_154608/Heave.mat');
         rmpath(path)
         disp('Done loading data')
     end
@@ -77,7 +77,7 @@ for i = 1:7
         gpsFix = load('GpsFix.mat');
         RelativeWind = load('RelativeWind.mat');
         EulerAngles = load('EulerAngles.mat');
-        Heave = load('Heave.mat');
+        Heave = load('./Mausund200709_53748/Heave.mat');
         rmpath(path)
         disp('Done loading data')
      end
@@ -118,26 +118,26 @@ heave2 = heave(2:2:end);
         P1 = P2(1:L/2+1);
         P1(2:end-1) = 2*P1(2:end-1);
         f = Fs * (1:(L/2))/L;
-        [mp, i] = max(abs(Y).^2);
-        hz = meanfreq(testsample, Fs);
+        [mp, i] = max(abs(Y(1:ceil(L/2))).^2);
+        hz = f(i);
         hzz1 = cat(1,hzz1,1/hz);
-        %%
-%         testsample = heave2(m-avrager:m+avrager+L-1);
-%         Y = fft(testsample,L)/L;
-%         Y(1) = 0;
-%         ampl= 2*abs(Y(1:ceil(L/2)));
-%         P2 = abs(Y/L);
-%         P1 = P2(1:L/2+1);
-%         P1(2:end-1) = 2*P1(2:end-1);
-%         f = Fs * (1:(L/2))/L;
-% 
-%         [mp, i] = max(abs(Y).^2);
-%         hz2 = meanfreq(testsample, Fs);
-%         hzz2 = cat(1,hzz2,1/hz2);
+        %
+        testsample = heave2(m-avrager:m+avrager+L-1);
+        Y = fft(testsample,L)/L;
+        Y(1) = 0;
+        ampl= 2*abs(Y(1:ceil(L/2)));
+        P2 = abs(Y/L);
+        P1 = P2(1:L/2+1);
+        P1(2:end-1) = 2*P1(2:end-1);
+        f = Fs * (1:(L/2))/L;
+
+        [mp, i] = max(abs(Y(1:ceil(L/2))).^2);
+        hz2 = meanfreq(testsample, Fs);
+        hzz2 = cat(1,hzz2,1/f(i));
         end
     end
 end
 figure;
 scatter(hzz1,sog_data)
 figure;
-scatter(ampl,sog_data)
+scatter(hzz2,sog_data)
