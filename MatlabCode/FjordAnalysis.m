@@ -151,7 +151,7 @@ for i = 1:4
             if mod(count,5)
                 ForecastWaveFreq_data = cat(1,ForecastWaveFreq_data, 1/waveHZ(x,y,curr_hour+1));            
                 if waveSize(x, y, curr_hour + 1) < 0.001
-                    disp('eeeeee')
+                    disp('Some error in forecast data size. Using previous')
                     ForecastWaveSize_data = cat(1, ForecastWaveSize_data, ForecastWaveSize_data(end));
                 else
                     ForecastWaveSize_data = cat(1, ForecastWaveSize_data, waveSize(x, y, curr_hour + 1));
@@ -200,12 +200,12 @@ for i = 1:4
     pause(0.01)
 end
 %%
-X = [ForecastWaveSize_data ForecastWaveFreq_data cos(deg2rad(relWaveDir_data)) ...
+X = [ForecastWaveSize_data ForecastWaveFreq_data abs(cos(deg2rad(relWaveDir_data))) ...
     ForcastWindSpeed_data CurrentSpeed_data ones(length(sog_data),1)];
 Y1 = sog_data;
 Y1_test = test_sog_data;
 w1 = (X'*X)\(X'*Y1);
-X_test = [test_ForecastWaveSize_data test_ForecastWaveFreq_data cos(deg2rad(test_relWaveDir_data)) ...
+X_test = [test_ForecastWaveSize_data test_ForecastWaveFreq_data abs(cos(deg2rad(test_relWaveDir_data))) ...
     test_ForcastWindSpeed_data test_CurrentSpeed_data ones(length(test_sog_data),1)]; 
 CorrData1 = [Y1 X(:, 1:end-1)];
 corrCoefs1 = corrcoef(CorrData1);
@@ -215,23 +215,71 @@ w2 = (X'*X)\(X'*Y2);
 CorrData2 = [Y2 X(:, 1:end-1)];
 corrCoefs2 = corrcoef(CorrData2);
 %%
+%%
 diff1 = [];
+sog_MSE = 0;
+output = [];
+
 for i = 1:length(test_sog_data)
     out = w1'*X_test(i, :)';
-    diff1 = cat(1,diff1, out - test_sog_data(i));
+    output = cat(1, output, out);
 end
+mean_output = mean(output);
+sog_summ1 = 0;
+sog_summ2 = 0;
+sog_summ3 = 0;
+for i = 1:length(test_sog_data)
+    out = w1'*X_test(i, :)';
+    sog_summ1 = sog_summ1 + (out-mean_output)*(test_sog_data(i) - mean(test_sog_data));
+    sog_summ2 = sog_summ2 + (out-mean_output)^2;
+    sog_summ3 = sog_summ3 + (test_sog_data(i) - mean(test_sog_data))^2;
+    diff1 = cat(1,diff1, out - test_sog_data(i));
+    sog_MSE = sog_MSE + (test_sog_data(i) - out)^2;
+end
+sog_r = sog_summ1/sqrt(sog_summ2*sog_summ3);
+sog_RMSE = sqrt(sog_MSE/length(test_sog_data));
 figure;
 scatter(linspace(1,1,length(diff1)),diff1)
 hold on
 boxplot(diff1)
-title 'Error between guessed Vr and actual Vr'
+title 'Error between guessed Vg and actual Vg'
 hold off
 %%
+figure;
+scatter(test_sog_data, output) 
+hold on
+[p] = polyfit(test_sog_data,output,1);
+x1 = linspace(min(test_sog_data),max(test_sog_data), length(test_sog_data));
+y1 = polyval(p,x1);
+plot(x1,y1)
+plot(x1,x1, 'k--')
+legend('Data',' Fit', 'Y = T', 'Location', 'NorthWest')
+string = join(['RMSE = ', num2str(sog_RMSE,4),  ', R = ', num2str(sog_r,4)]);
+xlabel 'Actual Vg [m/s]'
+ylabel 'Predicted Vg [m/s]'
+title(string)
+%%
 diff2 = [];
+vr_MSE = 0;
+output = [];
+for i = 1:length(test_Vr_data)
+    out = w2'*X_test(i, :)';
+    output = cat(1, output, out);
+end
+mean_output = mean(output);
+vr_summ1 = 0;
+vr_summ2 = 0;
+vr_summ3 = 0;
 for i = 1:length(test_Vr_data)
     out = w2'*X_test(i, :)';
     diff2 = cat(1,diff2,out - test_Vr_data(i));
+    vr_summ1 = vr_summ1 + (out-mean_output)*(test_Vr_data(i) - mean(test_Vr_data));
+    vr_summ2 = vr_summ2 + (out-mean_output)^2;
+    vr_summ3 = vr_summ3 + (test_Vr_data(i) - mean(test_Vr_data))^2;
+    vr_MSE = vr_MSE + (out - test_Vr_data(i))^2;
 end
+vr_r = vr_summ1/sqrt(vr_summ2*vr_summ3);
+vr_RMSE = sqrt(vr_MSE/length(test_Vr_data));
 figure;
 scatter(linspace(1,1,length(diff2)),diff2)
 hold on
@@ -239,19 +287,33 @@ boxplot(diff2)
 title 'Error between guessed Vr and actual Vr'
 hold off
 %%
+figure;
+scatter(test_Vr_data, output) 
+hold on
+p = polyfit(test_Vr_data,output,1);
+x1 = linspace(min(test_Vr_data),max(test_Vr_data), length(test_Vr_data));
+y1 = polyval(p,x1);
+plot(x1,y1)
+plot(x1,x1, 'k--')
+legend('Data',' Fit', 'Y = T', 'Location', 'NorthWest')
+string = join(['RMSE = ', num2str(vr_RMSE,4),  ', R = ', num2str(vr_r,4)]);
+xlabel 'Actual Vr [m/s]'
+ylabel 'Predicted Vr [m/s]'
+title(string)
+%%
 figure
-yvalues = {'Vg','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
+yvalues = {'Vg','ForecastWaveSize','ForecastWaveFreq','abs(\gamma_{wave})',...
     'WindSurgeSpeed', 'CurrentSurgeSpeed'};
-xvalues = {'Vg','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
+xvalues = {'Vg','ForecastWaveSize','ForecastWaveFreq','abs(\gamma_{wave})',...
     'WindSurgeSpeed', 'CurrentSurgeSpeed'};
 h = heatmap(xvalues,yvalues,corrCoefs1);
 h.Title = 'Correlation Matrix';
 
 %%
 figure
-yvalues = {'Vr','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
+yvalues = {'Vr','ForecastWaveSize','ForecastWaveFreq','abs(\gamma_{wave})',...
     'WindSurgeSpeed', 'CurrentSurgeSpeed'};
-xvalues = {'Vr','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
+xvalues = {'Vr','ForecastWaveSize','ForecastWaveFreq','abs(\gamma_{wave})',...
     'WindSurgeSpeed', 'CurrentSurgeSpeed'};
 h = heatmap(xvalues,yvalues,corrCoefs2);
 h.Title = 'Correlation Matrix';

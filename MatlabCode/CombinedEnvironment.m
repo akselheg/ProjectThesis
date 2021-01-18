@@ -30,7 +30,7 @@ test_Vr_data = [];
 xmax = 0; ymax = 0; ymin = inf; xmin = inf;
 avrager = 6*60; % average over x min
 count = 1;
-for i = 2:7
+for i = 2:11
     disp('Loading new data')
     %% load data
     if i == 1
@@ -108,6 +108,44 @@ for i = 2:7
         rmpath(path)
         load('weatherData_2020-7-9_2020-7-9.mat')
         load('currentweatherData_2020-7-9_2020-7-9.mat')
+        disp('Done loading data')
+     end
+    if i == 8
+        path = './Trondheim082546/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        rmpath(path)
+        load('weatherData_2020-2-20_2020-2-20.mat')
+        load('currentweatherData_2020-2-20_2020-2-20.mat')
+        disp('Done loading data')
+    end
+    if i == 9
+        path = './Trondheim111728/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        rmpath(path)
+        disp('Done loading data')
+    end
+    if i == 10
+        path = './Trondheum094058/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        rmpath(path)
+        disp('Done loading data')
+    end
+    if i == 11
+        path = './Trondheum101916/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        rmpath(path)
         disp('Done loading data')
     end
     %% Format and interpolations
@@ -238,12 +276,12 @@ for i = 2:7
 end
 meanSog = mean(sog_data);
 %%
-X = [ForecastWaveSize_data ForecastWaveFreq_data abs(cos(deg2rad(relWaveDir_data)))  ...
+X = [ForecastWaveSize_data ForecastWaveFreq_data abs(cos(deg2rad(relWaveDir_data))) ...
     ForcastWindSpeed_data CurrentSpeed_data ones(length(sog_data),1)];
 Y1 = sog_data;
 Y1_test = test_sog_data;
 w1 = (X'*X)\(X'*Y1);
-X_test = [test_ForecastWaveSize_data test_ForecastWaveFreq_data abs(cos(deg2rad(test_relWaveDir_data)))  ...
+X_test = [test_ForecastWaveSize_data test_ForecastWaveFreq_data abs(cos(deg2rad(test_relWaveDir_data))) ...
     test_ForcastWindSpeed_data test_CurrentSpeed_data ones(length(test_sog_data),1)]; 
 CorrData1 = [Y1 X(:, 1:end-1)];
 corrCoefs1 = corrcoef(CorrData1);
@@ -284,17 +322,17 @@ title 'Error between guessed Vg and actual Vg'
 hold off
 %%
 figure;
-scatter(test_sog_data, output) 
+scatter(output, test_sog_data) 
 hold on
-[p] = polyfit(test_sog_data,output,1);
-x1 = linspace(min(test_sog_data),max(test_sog_data), length(test_sog_data));
+[p] = polyfit(output,test_sog_data,1);
+x1 = linspace(min(output),max(output), length(output));
 y1 = polyval(p,x1);
 plot(x1,y1)
 plot(x1,x1, 'k--')
-legend('Data',' Fit', 'Y = T', 'Location', 'NorthWest')
+legend('Data',' Fit', 'Y = T', 'Location', 'SouthEast')
 string = join(['RMSE = ', num2str(sog_RMSE,4),  ', R = ', num2str(sog_r,4)]);
-xlabel 'Actual Vg [m/s]'
-ylabel 'Predicted Vg [m/s]'
+ylabel 'Actual Vg [m/s]'
+xlabel 'Predicted Vg [m/s]'
 title(string)
 %%
 diff2 = [];
@@ -326,32 +364,32 @@ title 'Error between guessed Vr and actual Vr'
 hold off
 %%
 figure;
-scatter(test_Vr_data, output) 
+scatter(output, test_Vr_data) 
 hold on
-p = polyfit(test_Vr_data,output,1);
-x1 = linspace(min(test_Vr_data),max(test_Vr_data), length(test_Vr_data));
+p = polyfit(output,test_Vr_data,1);
+x1 = linspace(min(output),max(output), length(output));
 y1 = polyval(p,x1);
 plot(x1,y1)
 plot(x1,x1, 'k--')
-legend('Data',' Fit', 'Y = T', 'Location', 'NorthWest')
+legend('Data',' Fit', 'Y = T', 'Location', 'SouthEast')
 string = join(['RMSE = ', num2str(vr_RMSE,4),  ', R = ', num2str(vr_r,4)]);
-xlabel 'Actual Vr [m/s]'
-ylabel 'Predicted Vr [m/s]'
+ylabel 'Actual Vr [m/s]'
+xlabel 'Predicted Vr [m/s]'
 title(string)
 %%
 figure
-yvalues = {'Vg','ForecastWaveSize','ForecastWaveFreq','abs(\gamma_{wave})',...
+yvalues = {'Vg','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
     'WindSurgeSpeed', 'CurrentSurgeSpeed'};
-xvalues = {'Vg','ForecastWaveSize','ForecastWaveFreq','abs(\gamma_{wave})',...
+xvalues = {'Vg','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
     'WindSurgeSpeed', 'CurrentSurgeSpeed'};
 h = heatmap(xvalues,yvalues,corrCoefs1);
 h.Title = 'Correlation Matrix';
 
 %%
 figure
-yvalues = {'Vr','ForecastWaveSize','ForecastWaveFreq','abs(\gamma_{wave})',...
+yvalues = {'Vr','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
     'WindSurgeSpeed', 'CurrentSurgeSpeed'};
-xvalues = {'Vr','ForecastWaveSize','ForecastWaveFreq','abs(\gamma_{wave})',...
+xvalues = {'Vr','ForecastWaveSize','ForecastWaveFreq','relWaveDir',...
     'WindSurgeSpeed', 'CurrentSurgeSpeed'};
 h = heatmap(xvalues,yvalues,corrCoefs2);
 h.Title = 'Correlation Matrix';
@@ -628,7 +666,7 @@ for m = (10*120) : length(gps_data.sog) - (10*120)
 end
 disp('Run Success')
 %%
-X_testt = [ForecastWaveSize_data ForecastWaveFreq_data abs(cos(deg2rad(relWaveDir_data)))...
+X_testt = [ForecastWaveSize_data ForecastWaveFreq_data abs(cos(deg2rad(relWaveDir_data))) ...
     ForcastWindSpeed_data CurrentSpeed_data, ones(length(sog_data),1)];
 %%
 diff1 = [];
@@ -661,17 +699,17 @@ title 'Error between guessed Vg and actual Vg'
 hold off
 %%
 figure;
-scatter(sog_data, output) 
+scatter(output, sog_data) 
 hold on
-p = polyfit(sog_data,output,1);
-x1 = linspace(min(sog_data),max(sog_data), length(sog_data));
+[p] = polyfit(output,sog_data,1);
+x1 = linspace(min(output),max(output), length(output));
 y1 = polyval(p,x1);
 plot(x1,y1)
 plot(x1,x1, 'k--')
-legend('Data',' Fit', 'Y = T', 'Location', 'NorthWest')
+legend('Data',' Fit', 'Y = T', 'Location', 'SouthEast')
 string = join(['RMSE = ', num2str(sog_RMSE,4),  ', R = ', num2str(sog_r,4)]);
-xlabel 'Actual Vg [m/s]'
-ylabel 'Predicted Vg [m/s]'
+ylabel 'Actual Vg [m/s]'
+xlabel 'Predicted Vg [m/s]'
 title(string)
 %%
 diff2 = [];
@@ -703,17 +741,17 @@ title 'Error between guessed Vr and actual Vr'
 hold off
 %%
 figure;
-scatter(Vr_data, output) 
+scatter(output, Vr_data) 
 hold on
-p = polyfit(Vr_data,output,1);
-x1 = linspace(min(Vr_data),max(Vr_data), length(Vr_data));
+[p,S] = polyfit(output,Vr_data,1);
+x1 = linspace(min(output),max(output), length(output));
 y1 = polyval(p,x1);
 plot(x1,y1)
 plot(x1,x1, 'k--')
-xlabel 'Actual Vr [m/s]'
-ylabel 'Predicted Vr [m/s]'
-legend('Data',' Fit', 'Y = T', 'Location', 'NorthWest')
+legend('Data',' Fit', 'Y = T', 'Location', 'SouthEast')
 string = join(['RMSE = ', num2str(vr_RMSE,4),  ', R = ', num2str(vr_r,4)]);
+ylabel 'Actual Vr [m/s]'
+xlabel 'Predicted Vr [m/s]'
 title(string)
 
 %%
