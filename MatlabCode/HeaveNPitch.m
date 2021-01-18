@@ -1,56 +1,143 @@
 clearvars; close all; clc;
+avrager = 60*6;
+Fs = 2;
+T = 1/Fs;
+L = 2*avrager;
+hzz1= [];
+hzz2= [];
+ampl = [];
+sog_data = [];
 %% load data
-path = './Mausund200701_221241/';
-addpath(path);
-gpsFix = load('GpsFix.mat');
+for i = 1:7
+    disp('Loading new data')
+    %% load data
+    if i == 1
+        path = './Mausund200701_181204/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        Heave = load('Heave.mat');
+        rmpath(path)
+        disp('Done loading data')
+    end
+    if i == 2
+        path = './Mausund200701_221241/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        Heave = load('Heave.mat');
+        rmpath(path)
+        disp('Done loading data')
+    end
+    if i == 3
+        path = './Mausund200703_080820/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        Heave = load('Heave.mat');
+        rmpath(path)
+        disp('Done loading data')
+    end
+    if i == 4
+        path = './Mausund200703_132548/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        Heave = load('Heave.mat');
+        rmpath(path)
+        disp('Done loading data')
+    end
+    if i == 5
+        path = './Mausund200705_120030/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        Heave = load('Heave.mat');
+        rmpath(path)
+        disp('Done loading data')
+    end
+    if i == 6
+        path = './Mausund200706_154608/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        Heave = load('Heave.mat');
+        rmpath(path)
+        disp('Done loading data')
+    end
+     if i == 7
+        path = './Mausund200709_53748/';
+        addpath(path);
+        gpsFix = load('GpsFix.mat');
+        RelativeWind = load('RelativeWind.mat');
+        EulerAngles = load('EulerAngles.mat');
+        Heave = load('Heave.mat');
+        rmpath(path)
+        disp('Done loading data')
+     end
 gpsFix = gpsFix.GpsFix;
-RelativeWind = load('RelativeWind.mat');
-EulerAngles = load('EulerAngles.mat');
 EulerAngles = EulerAngles.EulerAngles;
-Heave = load('./Mausund200701_221241/Heave.mat');
 Heave = Heave.Heave;
 heave = Heave.value;
-rmpath(path);
+pitch = EulerAngles.phi;
+time = gpsFix.timestamp;
+heave1 = heave(1:2:end);
+heave2 = heave(2:2:end);
 
-time = Heave.timestamp - Heave.timestamp(1);
-pitch = interp1(EulerAngles.timestamp, ssa(EulerAngles.phi,'deg' ), Heave.timestamp);
-counter = 0;
-counter1 =0;
-avrager = 240*6;
-for m = (10*120) : length(time) - (10*120)
-    counter1 = counter1 +1; 
-    round(time(m),1)
-        if ~mod(round(time(m),1),avrager)
-            counter = counter +1 ;
+%%
+% testsample = pitch(1000-avrager:1000+avrager+L-1);
+% Y = fft(testsample,L)/L;
+% Y(1) = 0;
+% ampl= 2*abs(Y(1:ceil(L/2)));
+% P2 = abs(Y/L);
+% P1 = P2(1:L/2+1);
+% P1(2:end-1) = 2*P1(2:end-1);
+% f = Fs * (1:(L/2))/L;
+% [mp, i] = max(abs(Y).^2);
+% hz = f(i);
+% hzz1 = cat(1,hzz1,hz);
+% freq = meanfreq(testsample, Fs);
+% stop;
+    for m = (10*120) : length(time) - (10*120)
+        if ~mod(round((m),1),avrager)
+        sog = mean(gpsFix.sog(m-avrager:m+avrager));
+        sog_data = cat(1, sog_data,sog);
+    %%
+        testsample = pitch(m-avrager:m+avrager+L-1);
+        Y = fft(testsample,L)/L;
+        ampl = cat(1,ampl, mean(Y));
+        Y(1) = 0;
+        %ampl= 2*abs(Y(1:ceil(L/2)));
+        P2 = abs(Y/L);
+        P1 = P2(1:L/2+1);
+        P1(2:end-1) = 2*P1(2:end-1);
+        f = Fs * (1:(L/2))/L;
+        [mp, i] = max(abs(Y).^2);
+        hz = meanfreq(testsample, Fs);
+        hzz1 = cat(1,hzz1,1/hz);
+        %%
+%         testsample = heave2(m-avrager:m+avrager+L-1);
+%         Y = fft(testsample,L)/L;
+%         Y(1) = 0;
+%         ampl= 2*abs(Y(1:ceil(L/2)));
+%         P2 = abs(Y/L);
+%         P1 = P2(1:L/2+1);
+%         P1(2:end-1) = 2*P1(2:end-1);
+%         f = Fs * (1:(L/2))/L;
+% 
+%         [mp, i] = max(abs(Y).^2);
+%         hz2 = meanfreq(testsample, Fs);
+%         hzz2 = cat(1,hzz2,1/hz2);
         end
+    end
 end
-%%
-Fs = 4;
-T = 1/Fs;
-L = 960;
-testsample = pitch(121:121+L - 1);
-Y = fft(testsample);
-Y(1) = 0;
-P2 = abs(Y/L);
-P1 = P2(1:L/2+1);
-P1(2:end-1) = 2*P1(2:end-1);
-f = Fs * (0:(L/2))/L;
 figure;
-plot(f,P1);
-[mp, i] = max(P1);
-hz= 2*pi*f(i);
-%%
-Fs = 4;
-T = 1/Fs;
-L = 960;
-testsample = heave(121:121+L - 1);
-Y = fft(testsample);
-Y(1) = 0;
-P2 = abs(Y/L);
-P1 = P2(1:L/2+1);
-P1(2:end-1) = 2*P1(2:end-1);
-f = Fs * (0:(L/2))/L;
+scatter(hzz1,sog_data)
 figure;
-plot(f,P1);
-[mp, i] = max(P1);
-hz2 = 2*pi*f(i);
+scatter(ampl,sog_data)
