@@ -5,6 +5,8 @@ T = 1/Fs;
 L = 2*avrager;
 hzz1= [];
 hzz2= [];
+rms1 = [];
+rms2 = [];
 ampl = [];
 sog_data = [];
 %% load data
@@ -18,8 +20,9 @@ for i = 1:7
         RelativeWind = load('RelativeWind.mat');
         EulerAngles = load('EulerAngles.mat');
         Heave = load('./Mausund200701_181204/Heave.mat');
-        rmpath(path)
+        
         disp('Done loading data')
+        rmpath(path)
     end
     if i == 2
         path = './Mausund200701_221241/';
@@ -90,6 +93,7 @@ time = gpsFix.timestamp;
 heave1 = heave(1:2:end);
 heave2 = heave(2:2:end);
 
+
 %%
 % testsample = pitch(1000-avrager:1000+avrager+L-1);
 % Y = fft(testsample,L)/L;
@@ -109,8 +113,8 @@ heave2 = heave(2:2:end);
         sog = mean(gpsFix.sog(m-avrager:m+avrager));
         sog_data = cat(1, sog_data,sog);
     %%
-        testsample = pitch(m-avrager:m+avrager+L-1);
-        Y = fft(testsample,L)/L;
+        testsample1 = pitch(m-avrager:m+avrager+L-1);
+        Y = fft(testsample1,L)/L;
         ampl = cat(1,ampl, mean(Y));
         Y(1) = 0;
         %ampl= 2*abs(Y(1:ceil(L/2)));
@@ -119,11 +123,12 @@ heave2 = heave(2:2:end);
         P1(2:end-1) = 2*P1(2:end-1);
         f = Fs * (1:(L/2))/L;
         [mp, i] = max(abs(Y(1:ceil(L/2))).^2);
-        hz = f(i);
-        hzz1 = cat(1,hzz1,1/hz);
+        hz = meanfreq(testsample1, Fs);
+        hzz1 = cat(1,hzz1, hz);
+        rms1 = cat(1, rms1, rms(testsample1));
         %
-        testsample = heave2(m-avrager:m+avrager+L-1);
-        Y = fft(testsample,L)/L;
+        testsample2 = heave2(m-avrager:m+avrager+L-1);
+        Y = fft(testsample2,L)/L;
         Y(1) = 0;
         ampl= 2*abs(Y(1:ceil(L/2)));
         P2 = abs(Y/L);
@@ -132,8 +137,9 @@ heave2 = heave(2:2:end);
         f = Fs * (1:(L/2))/L;
 
         [mp, i] = max(abs(Y(1:ceil(L/2))).^2);
-        hz2 = meanfreq(testsample, Fs);
-        hzz2 = cat(1,hzz2,1/f(i));
+        hz2 = meanfreq(testsample2, Fs);
+        hzz2 = cat(1,hzz2, hz2);
+        rms2 = cat(1, rms2, rms(testsample2));
         end
     end
 end
@@ -141,3 +147,7 @@ figure;
 scatter(hzz1,sog_data)
 figure;
 scatter(hzz2,sog_data)
+figure;
+scatter(rms1,sog_data)
+figure;
+scatter(rms2,sog_data)
